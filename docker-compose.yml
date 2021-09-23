@@ -3,7 +3,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-prod
     container_name: app
     depends_on:
       - postgres
@@ -12,7 +12,7 @@ services:
       - .env:/app/.env
     depends_on:
       - postgres
-      
+
   nginx:
     build:
       context: .

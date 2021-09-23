@@ -1,13 +1,13 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { BalanceService } from 'modules/balance';
+import { BalanceService } from '../balance';
 import request from 'request-promise';
 import PQueue from 'p-queue';
 import moment from 'moment';
-import { AddressService } from 'modules/address';
-import { HistoryService } from 'modules/history';
+import { AddressService } from '../address';
+import { HistoryService } from '../history';
 import { MAX_SYNC_DAY } from '../../constants';
-import { ConfigService } from 'modules/config';
+import { ConfigService } from '../config';
 
 const queue = new PQueue({ concurrency: 5 });
 /*
