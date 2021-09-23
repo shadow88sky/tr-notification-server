@@ -1,0 +1,42 @@
+version: "2"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app
+    depends_on:
+      - postgres
+    volumes:
+      - ./src:/app/src
+      - .env:/app/.env
+    depends_on:
+      - postgres
+      
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile-nginx
+    container_name: app-nginx
+    depends_on:
+      - app
+    environment:
+      - NGINX_SERVER_NAME=localhost
+      - NEST_HOST=app
+      - NEST_PORT=3000
+      - NGINX_MAX_BODY=100M
+    ports:
+      - 80:80
+
+  postgres:
+    image: postgres
+    container_name: app-postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: tr-notification
+#     volumes:
+#       - postgresdbdata:/var/lib/mysql
+
+# volumes:
+#   postgresdbdata:
