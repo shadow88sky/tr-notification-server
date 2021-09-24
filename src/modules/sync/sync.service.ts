@@ -1,9 +1,9 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { BalanceService } from '../balance';
 import request from 'request-promise';
 import PQueue from 'p-queue';
 import moment from 'moment';
+import { BalanceService } from '../balance';
 import { AddressService } from '../address';
 import { HistoryService } from '../history';
 import { MAX_SYNC_DAY } from '../../constants';
