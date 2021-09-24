@@ -4,6 +4,7 @@ import { CreateAddressPayload } from './address.payload';
 import { AddressService } from './address.service';
 import { SyncService } from '../sync';
 import { MAX_SYNC_DAY } from '../../constants';
+import { LoggerService } from '../common/';
 
 @Controller('address')
 @ApiTags('Address')
@@ -11,6 +12,7 @@ export class AddressController {
   constructor(
     private readonly addressService: AddressService,
     private readonly syncService: SyncService,
+    private readonly loggerService: LoggerService,
   ) {}
 
   /**
@@ -19,6 +21,7 @@ export class AddressController {
    */
   @Get()
   async paginate() {
+    this.loggerService.info('paginate');
     return this.addressService.paginate({ page: 1, limit: 10 });
   }
 

@@ -11,6 +11,9 @@ import { SyncModule } from './../sync';
 import { ConfigModule, ConfigService } from './../config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { ErrorInterceptor, LoggingInterceptor } from '../../interceptors';
+import { HttpExceptionFilter } from 'filters';
 
 @Module({
   imports: [
@@ -43,6 +46,20 @@ import { AppService } from './app.service';
     MailModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ErrorInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+    AppService,
+  ],
 })
 export class AppModule {}
