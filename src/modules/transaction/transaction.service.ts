@@ -14,7 +14,7 @@ export class TransactionService implements OnModuleInit {
     // Instantiate web3 with WebSocket provider
     const web3 = new Web3(
       new Web3.providers.WebsocketProvider(
-        'wss://kovan.infura.io/ws/v3/13229d80a2234ca4acebbb2a11f3b826',
+        'wss://kovan.infura.io/ws/v3/',
       ),
     );
 
@@ -70,7 +70,7 @@ export class TransactionService implements OnModuleInit {
     // Instantiate web3 with WebSocketProvider
     const web3 = new Web3(
       new Web3.providers.WebsocketProvider(
-        'wss://kovan.infura.io/ws/v3/13229d80a2234ca4acebbb2a11f3b826',
+        'wss://kovan.infura.io/ws/v3/',
       ),
     );
 

@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { CustomError } from '../../errors';
 import { WebhookPayload } from './proposal.payload';
 
 import { SnapshotService } from './snapshot.service';
@@ -25,6 +26,7 @@ export class SnapshotController {
      */
 
     const id = payload.id.split('/')[1];
+    if (!id) throw new CustomError('id not found');
     const response = await this.snapshotService.querySnapshotProposals({
       id,
     });

@@ -8,6 +8,8 @@ import { AddressModule } from './../address';
 import { TransactionModule } from './../transaction';
 import { MailModule } from './../mail';
 import { SyncModule } from './../sync';
+import { PluginModule } from './../plugin';
+import { BalanceModule } from './../balance';
 import { ConfigModule, ConfigService } from './../config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -44,6 +46,8 @@ import { HttpExceptionFilter } from 'filters';
     SyncModule,
     AddressModule,
     MailModule,
+    PluginModule,
+    BalanceModule,
   ],
   controllers: [AppController],
   providers: [
