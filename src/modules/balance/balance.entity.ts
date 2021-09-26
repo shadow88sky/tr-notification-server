@@ -4,7 +4,10 @@ import {
   PrimaryGeneratedColumn,
   Unique,
   CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Category } from '../category';
 
 @Entity({
   name: 'balances',
@@ -26,6 +29,9 @@ export class Balance {
 
   @Column({ type: 'varchar', nullable: true })
   balanceExact: string;
+
+  @Column({ type: 'varchar', nullable: true, default: '0' })
+  balance_usd: string;
 
   @Column({ type: 'varchar', nullable: true })
   quote_currency: string;
@@ -56,6 +62,10 @@ export class Balance {
 
   @Column({ type: 'varchar', nullable: true })
   nft_token_id: string;
+
+  @ManyToOne(() => Category)
+  @JoinColumn({ name: 'category_id' })
+  category: Category;
 
   @Column({ type: 'timestamp' })
   updated_at: Date;

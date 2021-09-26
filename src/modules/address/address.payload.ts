@@ -13,4 +13,10 @@ export class CreateAddressPayload {
   })
   @IsNotEmpty()
   chain_id: number;
+
+  @ApiProperty({
+    required: true,
+  })
+  @IsNotEmpty()
+  category: string;
 }

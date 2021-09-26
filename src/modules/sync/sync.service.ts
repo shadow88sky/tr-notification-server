@@ -32,7 +32,7 @@ export class SyncService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    // await this.asynBeforeAddressBalancesHistory();
+    this.asynAddressBalances();
   }
 
   /**
@@ -42,11 +42,13 @@ export class SyncService implements OnModuleInit {
   @Cron('0 */10 * * * *')
   async asynAddressBalances() {
     //
-    const addressList = await this.addressService.find({});
+    const addressList = await this.addressService.find({
+      relations: ['category'],
+    });
 
     addressList.forEach((item) => {
       queue.add(() => {
-        this.handleAddressBalances(item.address, item.chain_id);
+        this.handleAddressBalances(item);
       });
     });
 
@@ -58,7 +60,7 @@ export class SyncService implements OnModuleInit {
    * @returns
    * 每天2点执行一次
    */
-  @Cron('0 0 2 * * *')
+  // @Cron('0 0 2 * * *')
   async asynAddressBalancesHistory() {
     //
 
@@ -107,7 +109,7 @@ export class SyncService implements OnModuleInit {
    * asynBeforeAddressBalancesHistory
    * 每天0点执行一次
    */
-  @Cron('0 0 0 * * *')
+  // @Cron('0 0 0 * * *')
   async asynBeforeAddressBalancesHistory() {
     //
     const addressList = await this.addressService.find({
@@ -127,12 +129,12 @@ export class SyncService implements OnModuleInit {
     //
   }
 
-  async handleAddressBalances(address: string, chain_id: number) {
+  async handleAddressBalances(address) {
     const options = {
       method: 'GET',
-      url: `https://api.covalenthq.com/v1/${chain_id}/address/${address}/balances_v2/?&nft=true&key=${this.configService.get(
-        'COVALENTHQ_KEY',
-      )}"`,
+      url: `https://api.covalenthq.com/v1/${address.chain_id}/address/${
+        address.address
+      }/balances_v2/?&nft=true&key=${this.configService.get('COVALENTHQ_KEY')}`,
       headers: {
         'Content-Type': 'application/json',
       },
@@ -140,7 +142,7 @@ export class SyncService implements OnModuleInit {
     };
     const response = await request(options);
 
-    await this.balanceService.handleMany(response.data);
+    await this.balanceService.handleMany(response.data, address);
   }
 
   /**
@@ -154,11 +156,17 @@ export class SyncService implements OnModuleInit {
     chain_id: number,
     days: number,
   ) {
+    console.log(
+      'handleAddressBalancesHistory',
+      `https://api.covalenthq.com/v1/${chain_id}/address/${address}/portfolio_v2/?&days=${days}&key=${this.configService.get(
+        'COVALENTHQ_KEY',
+      )}`,
+    );
     const options = {
       method: 'GET',
       url: `https://api.covalenthq.com/v1/${chain_id}/address/${address}/portfolio_v2/?&days=${days}&key=${this.configService.get(
         'COVALENTHQ_KEY',
-      )}"`,
+      )}`,
       headers: {
         'Content-Type': 'application/json',
       },
@@ -166,6 +174,8 @@ export class SyncService implements OnModuleInit {
     };
     const response = await request(options);
 
-    await this.historyService.handleMany(response, days);
+    if (response.address) {
+      await this.historyService.handleMany(response, days);
+    }
   }
 }

@@ -10,6 +10,7 @@ import { MailModule } from './../mail';
 import { SyncModule } from './../sync';
 import { PluginModule } from './../plugin';
 import { BalanceModule } from './../balance';
+import { CategoryModule } from './../category';
 import { ConfigModule, ConfigService } from './../config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -48,6 +49,7 @@ import { HttpExceptionFilter } from 'filters';
     MailModule,
     PluginModule,
     BalanceModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [

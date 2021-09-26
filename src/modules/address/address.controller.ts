@@ -2,8 +2,6 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateAddressPayload } from './address.payload';
 import { AddressService } from './address.service';
-import { SyncService } from '../sync';
-import { MAX_SYNC_DAY } from '../../constants';
 import { LoggerService } from '../common/';
 
 @Controller('address')
@@ -11,7 +9,6 @@ import { LoggerService } from '../common/';
 export class AddressController {
   constructor(
     private readonly addressService: AddressService,
-    private readonly syncService: SyncService,
     private readonly loggerService: LoggerService,
   ) {}
 
@@ -33,11 +30,14 @@ export class AddressController {
   @Post()
   async create(@Body() payload: CreateAddressPayload) {
     const result = await this.addressService.create(payload);
-    this.syncService.handleAddressBalancesHistory(
+
+    /*
+    await this.syncService.handleAddressBalancesHistory(
       payload.address,
       payload.chain_id,
       MAX_SYNC_DAY,
     );
+    */
 
     return result;
   }

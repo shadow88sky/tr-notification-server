@@ -2,34 +2,19 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  Unique,
   CreateDateColumn,
   UpdateDateColumn,
-  JoinColumn,
-  ManyToOne,
 } from 'typeorm';
-import { Category } from '../category';
 
 @Entity({
-  name: 'addresses',
+  name: 'categories',
 })
-@Unique('address_chain', ['address', 'chain_id'])
-export class Address {
+export class Category {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'varchar', nullable: true })
-  address: string;
-
-  @Column({ nullable: true })
-  chain_id: number;
-
-  @Column({ type: 'boolean', nullable: true, default: false })
-  is_sync_before: boolean;
-
-  @ManyToOne(() => Category)
-  @JoinColumn({ name: 'category_id' })
-  category: Category;
+  name: string;
 
   @CreateDateColumn({
     type: 'timestamp',

@@ -31,14 +31,14 @@ export class ErrorInterceptor implements NestInterceptor {
     next: CallHandler<any>,
   ): Observable<any> {
     const call$ = next.handle();
-    const target = context.getHandler();
-    const statusCode = this.reflector.get<HttpStatus>(
-      META.HTTP_ERROR_CODE,
-      target,
-    );
-    const message =
-      this.reflector.get<TMessage>(META.HTTP_ERROR_MESSAGE, target) ||
-      TEXT.HTTP_DEFAULT_ERROR_TEXT;
+    // const target = context.getHandler();
+    // const statusCode = this.reflector.get<HttpStatus>(
+    //   META.HTTP_ERROR_CODE,
+    //   target,
+    // );
+    // const message =
+    //   this.reflector.get<TMessage>(META.HTTP_ERROR_MESSAGE, target) ||
+    //   TEXT.HTTP_DEFAULT_ERROR_TEXT;
     return call$.pipe(catchError((error) => throwError(() => error)));
   }
 }

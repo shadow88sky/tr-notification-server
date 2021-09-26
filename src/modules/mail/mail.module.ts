@@ -31,6 +31,7 @@ import { MailController } from './mail.controller';
       }),
       inject: [ConfigService],
     }),
+    ConfigModule,
   ],
   providers: [MailService],
   exports: [MailService],

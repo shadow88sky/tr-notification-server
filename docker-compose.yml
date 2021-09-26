@@ -10,6 +10,7 @@ services:
     volumes:
       - ./src:/app/src
       - .env:/app/.env
+      - logs:/app/logs
     depends_on:
       - postgres
 

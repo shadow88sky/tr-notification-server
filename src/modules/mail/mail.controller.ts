@@ -9,11 +9,12 @@ export class MailController {
 
   /**
    * sendMailMessage
-   * 
+   *
    * @returns
    */
   @Post()
   async sendMailMessage() {
-    return await this.mailService.sendMessage();
+    await this.mailService.sendMessage();
+    return true;
   }
 }

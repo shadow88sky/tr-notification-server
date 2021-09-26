@@ -28,18 +28,22 @@ export class BalanceService {
    *
    * ignore duplicate key value violates unique constraint "address_contract_updated"
    */
-  async handleMany(payload) {
+  async handleMany(payload, address) {
+    console.log('handleMany', _.get(address, 'category'));
     try {
       const arr = [];
       payload.items.forEach((item) => {
-        console.log('item', item);
         let balance = new Balance();
         balance.address = payload.address;
         balance.balance = new Decimal(item.balance)
           .div(10 ** item.contract_decimals)
           .toString();
         balance.balanceExact = item.balance;
+        balance.balance_usd = new Decimal(item.balance)
+          .mul(item.quote_rate || 0)
+          .toString();
         balance.type = item.type;
+        balance.category = _.get(address, 'category');
         balance.quote_currency = payload.quote_currency;
         balance.chain_id = payload.chain_id;
         balance.contract_decimals = item.contract_decimals;
@@ -72,5 +76,13 @@ export class BalanceService {
    */
   async findOne(options) {
     return await this.balanceRepository.findOne(options);
+  }
+
+  /**
+   *
+   * @returns
+   */
+  query() {
+    return this.balanceRepository;
   }
 }
