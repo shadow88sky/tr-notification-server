@@ -14,7 +14,6 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { LoggerService } from '../modules/common';
-import { error } from 'console';
 import {
   CannotCreateEntityIdMapError,
   EntityNotFoundError,
@@ -29,7 +28,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   constructor(private readonly loggerService: LoggerService) {}
   catch(exception: HttpException, host: ArgumentsHost) {
     this.loggerService.error(exception);
-    console.log('exception.message', exception.message);
+    console.log('HttpExceptionFilter', exception.message);
 
     const request = host.switchToHttp().getRequest();
     const response = host.switchToHttp().getResponse();

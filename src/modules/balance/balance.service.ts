@@ -29,7 +29,7 @@ export class BalanceService {
    * ignore duplicate key value violates unique constraint "address_contract_updated"
    */
   async handleMany(payload, address) {
-    console.log('handleMany', _.get(address, 'category'));
+    
     try {
       const arr = [];
       payload.items.forEach((item) => {
@@ -65,7 +65,7 @@ export class BalanceService {
       }
 
       throw error;
-      // console.log('error', error);
+      // 
     }
   }
 

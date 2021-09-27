@@ -14,6 +14,7 @@ import { Category } from '../category';
 })
 @Unique('address_contract_updated', [
   'address',
+  'chain_id',
   'updated_at',
   'contract_address',
 ])

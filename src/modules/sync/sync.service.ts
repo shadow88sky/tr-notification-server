@@ -11,8 +11,9 @@ import { AddressService } from '../address';
 import { HistoryService } from '../history';
 import { MAX_SYNC_DAY } from '../../constants';
 import { ConfigService } from '../config';
+import { LoggerService } from '../common/';
 
-const queue = new PQueue({ concurrency: 5 });
+const queue = new PQueue({ concurrency: 2 });
 /*
 
 * * * * * *
@@ -36,6 +37,7 @@ export class SyncService implements OnModuleInit {
     private readonly historyService: HistoryService,
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
+    private readonly loggerService: LoggerService,
   ) {
     this.defaultRedisClient = this.redisService.getClient();
   }
@@ -49,7 +51,8 @@ export class SyncService implements OnModuleInit {
    * asynAddressBalances
    * 每隔10分钟执行一次
    */
-  @Cron('0 */10 * * * *')
+  // @Cron('0 */10 * * * *')
+  @Cron('*/5 * * * * *')
   async syncAddressBalances() {
     //
     const addressList = await this.addressService.find({
@@ -228,19 +231,27 @@ export class SyncService implements OnModuleInit {
   }
 
   async handleAddressBalances(address) {
-    const options = {
-      method: 'GET',
-      url: `https://api.covalenthq.com/v1/${address.chain_id}/address/${
-        address.address
-      }/balances_v2/?&nft=true&key=${this.configService.get('COVALENTHQ_KEY')}`,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      json: true,
-    };
-    const response = await request(options);
+    try {
+      const options = {
+        method: 'GET',
+        url: `https://api.covalenthq.com/v1/${address.chain_id}/address/${
+          address.address
+        }/balances_v2/?&nft=true&key=${this.configService.get(
+          'COVALENTHQ_KEY',
+        )}`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        json: true,
+      };
+      const response = await request(options);
 
-    await this.balanceService.handleMany(response.data, address);
+      if (response.data) {
+        await this.balanceService.handleMany(response.data, address);
+      }
+    } catch (error) {
+      this.loggerService.error(error);
+    }
   }
 
   /**
