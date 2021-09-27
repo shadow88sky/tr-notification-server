@@ -82,7 +82,7 @@ export class BalanceService {
    *
    * @returns
    */
-  query() {
-    return this.balanceRepository;
+  query(sql) {
+    return this.balanceRepository.query(sql);
   }
 }

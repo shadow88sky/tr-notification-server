@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { HttpExceptionFilter } from 'filters';
 import { AuthModule } from './../auth';
 import { CommonModule } from './../common';
 import { SnapshotModule } from './../snapshot';
@@ -14,9 +17,7 @@ import { CategoryModule } from './../category';
 import { ConfigModule, ConfigService } from './../config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ErrorInterceptor, LoggingInterceptor } from '../../interceptors';
-import { HttpExceptionFilter } from 'filters';
 
 @Module({
   imports: [
@@ -36,6 +37,14 @@ import { HttpExceptionFilter } from 'filters';
           entities: [__dirname + './../**/**.entity{.ts,.js}'],
           synchronize: configService.get('DB_SYNC') === 'true',
         } as TypeOrmModuleAsyncOptions;
+      },
+    }),
+    RedisModule.forRoot({
+      closeClient: true,
+      config: {
+        host: '127.0.0.1',
+        port: 6379,
+        password: '',
       },
     }),
     ScheduleModule.forRoot(),

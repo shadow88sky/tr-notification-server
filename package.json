@@ -24,6 +24,7 @@
     "migration:revert": "yarn ts-typeorm migration:revert"
   },
   "dependencies": {
+    "@liaoliaots/nestjs-redis": "^3.1.1",
     "@nestjs-modules/mailer": "^1.6.0",
     "@nestjs/common": "^8.0.6",
     "@nestjs/core": "^8.0.6",
@@ -42,6 +43,7 @@
     "graphql": "^15.6.0",
     "graphql-request": "^3.5.0",
     "handlebars": "^4.7.7",
+    "ioredis": "^4.27.9",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "mysql": "^2.18.1",
@@ -67,6 +69,7 @@
     "@nestjs/testing": "^8.0.6",
     "@types/bcrypt": "^5.0.0",
     "@types/cron": "^1.7.3",
+    "@types/ioredis": "^4.27.4",
     "@types/jest": "^27.0.1",
     "@types/node": "^14.17.5",
     "@types/nodemailer": "^6.4.4",

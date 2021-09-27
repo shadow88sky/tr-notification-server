@@ -3,11 +3,14 @@ import { Cron } from '@nestjs/schedule';
 import request from 'request-promise';
 import PQueue from 'p-queue';
 import moment from 'moment';
+import _ from 'lodash';
 import { BalanceService } from '../balance';
 import { AddressService } from '../address';
 import { HistoryService } from '../history';
 import { MAX_SYNC_DAY } from '../../constants';
 import { ConfigService } from '../config';
+import { RedisService } from '@liaoliaots/nestjs-redis';
+import { Redis } from 'ioredis';
 
 const queue = new PQueue({ concurrency: 5 });
 /*
@@ -24,15 +27,22 @@ second (optional)
 */
 @Injectable()
 export class SyncService implements OnModuleInit {
+  private readonly defaultRedisClient: Redis;
+  private redisKey = 'tr:balance-top2:list';
+
   constructor(
     private readonly balanceService: BalanceService,
     private readonly addressService: AddressService,
     private readonly historyService: HistoryService,
     private readonly configService: ConfigService,
-  ) {}
+    private readonly redisService: RedisService,
+  ) {
+    this.defaultRedisClient = this.redisService.getClient();
+  }
 
   async onModuleInit() {
-    this.asynAddressBalances();
+    // this.syncAddressBalances();
+    // this.syncBalanceToRedis();
   }
 
   /**
@@ -40,7 +50,7 @@ export class SyncService implements OnModuleInit {
    * 每隔10分钟执行一次
    */
   @Cron('0 */10 * * * *')
-  async asynAddressBalances() {
+  async syncAddressBalances() {
     //
     const addressList = await this.addressService.find({
       relations: ['category'],
@@ -61,7 +71,7 @@ export class SyncService implements OnModuleInit {
    * 每天2点执行一次
    */
   // @Cron('0 0 2 * * *')
-  async asynAddressBalancesHistory() {
+  async syncAddressBalancesHistory() {
     //
 
     /* test 
@@ -110,7 +120,7 @@ export class SyncService implements OnModuleInit {
    * 每天0点执行一次
    */
   // @Cron('0 0 0 * * *')
-  async asynBeforeAddressBalancesHistory() {
+  async syncBeforeAddressBalancesHistory() {
     //
     const addressList = await this.addressService.find({
       where: {
@@ -127,6 +137,63 @@ export class SyncService implements OnModuleInit {
       });
     }
     //
+  }
+
+  /**
+   * syncBalanceToRedis
+   *
+   * @description sync latest balance  to redis
+   */
+  async syncBalanceToRedis() {
+    const sql = `
+   SELECT category_id,contract_address,chain_id,address,(array_agg(id ORDER BY updated_at DESC))[1] as id ,
+  (array_agg(balance ORDER BY updated_at DESC))[1] as balance ,(array_agg(updated_at ORDER BY updated_at DESC))[1] as updated_at 
+  from balances
+  WHERE balances.address IN ('0x4750c43867ef5f89869132eccf19b9b6c4286e1a')
+  GROUP BY category_id,contract_address,chain_id,address
+   `;
+
+    const result = await this.balanceService.query(sql);
+    // F=console.log('result', result);
+
+    //   "8961f5f7-c0e7-4ac7-a072-e48ba03f354e":[
+    //     {
+    //         "1":[{
+    //             "0x4750c43867ef5f89869132eccf19b9b6c4286e1a":[{
+    //                 "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee":"0"
+    //             }]
+    //         }]
+    //     }
+    // ]
+    // {
+    //   category_id: '8961f5f7-c0e7-4ac7-a072-e48ba03f354e',
+    //   contract_address: '0x2b4742593da55d694cf563563ef161c62bdc1d09',
+    //   chain_id: 1,
+    //   address: '0x4750c43867ef5f89869132eccf19b9b6c4286e1a',
+    //   id: '4c2ae4b2-41f9-41b0-ae2c-f9f780c8a810',
+    //   balance: '83262.65432',
+    //   updated_at: 2021-09-27T03:30:04.331Z
+    // },
+    // let balanceObj: Record<string, string>;
+    let balanceObj: Record<string, string> = {};
+    if (result.length) {
+      _.forEach(
+        result,
+        ({ category_id, chain_id, address, contract_address, balance }) => {
+          // console.log('balance', balance);
+          balanceObj[
+            `${category_id}:${chain_id}:${address}:${contract_address}`
+          ] = balance;
+          // balanceObj['22'] = 11;
+        },
+      );
+    }
+
+    await this.defaultRedisClient.lpush(
+      this.redisKey,
+      JSON.stringify(balanceObj),
+    );
+    await this.defaultRedisClient.ltrim(this.redisKey, 0, 1);
   }
 
   async handleAddressBalances(address) {

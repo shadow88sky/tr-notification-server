@@ -3,6 +3,7 @@ import { SyncService } from './sync.service';
 import { BalanceModule } from './../balance';
 import { AddressModule } from './../address';
 import { HistoryModule } from './../history';
+import { CategoryModule } from './../category';
 import { ConfigModule } from './../config';
 
 @Module({
@@ -11,6 +12,7 @@ import { ConfigModule } from './../config';
     forwardRef(() => AddressModule),
     HistoryModule,
     ConfigModule,
+    CategoryModule,
   ],
   exports: [SyncService],
   providers: [SyncService],
