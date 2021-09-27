@@ -4,13 +4,13 @@ import request from 'request-promise';
 import PQueue from 'p-queue';
 import moment from 'moment';
 import _ from 'lodash';
+import { RedisService } from '@liaoliaots/nestjs-redis';
+import { Redis } from 'ioredis';
 import { BalanceService } from '../balance';
 import { AddressService } from '../address';
 import { HistoryService } from '../history';
 import { MAX_SYNC_DAY } from '../../constants';
 import { ConfigService } from '../config';
-import { RedisService } from '@liaoliaots/nestjs-redis';
-import { Redis } from 'ioredis';
 
 const queue = new PQueue({ concurrency: 5 });
 /*
@@ -42,7 +42,7 @@ export class SyncService implements OnModuleInit {
 
   async onModuleInit() {
     // this.syncAddressBalances();
-    // this.syncBalanceToRedis();
+    this.syncBalanceToRedis();
   }
 
   /**
@@ -144,17 +144,30 @@ export class SyncService implements OnModuleInit {
    *
    * @description sync latest balance  to redis
    */
+  @Cron('*/10 * * * * *')
   async syncBalanceToRedis() {
+    const addressList = await this.addressService.find({
+      select: ['address'],
+    });
+
+    let addressArr = [];
+    _.forEach(addressList, (item) => {
+      addressArr.push(`'${item.address}'`);
+    });
+    // console.log('addressList', addressArr.join(','));
+
     const sql = `
    SELECT category_id,contract_address,chain_id,address,(array_agg(id ORDER BY updated_at DESC))[1] as id ,
-  (array_agg(balance ORDER BY updated_at DESC))[1] as balance ,(array_agg(updated_at ORDER BY updated_at DESC))[1] as updated_at 
+  (array_agg(balance ORDER BY updated_at DESC))[1] as balance ,(array_agg(contract_ticker_symbol ORDER BY updated_at DESC))[1] as contract_ticker_symbol 
   from balances
-  WHERE balances.address IN ('0x4750c43867ef5f89869132eccf19b9b6c4286e1a')
+  WHERE balances.address IN (${addressArr.join(',')})
   GROUP BY category_id,contract_address,chain_id,address
    `;
 
+    // console.log('sql', sql);
+
     const result = await this.balanceService.query(sql);
-    // F=console.log('result', result);
+    // console.log('result', result);
 
     //   "8961f5f7-c0e7-4ac7-a072-e48ba03f354e":[
     //     {
@@ -175,16 +188,28 @@ export class SyncService implements OnModuleInit {
     //   updated_at: 2021-09-27T03:30:04.331Z
     // },
     // let balanceObj: Record<string, string>;
-    let balanceObj: Record<string, string> = {};
+    let balanceObj: Record<string, Object> = {};
     if (result.length) {
       _.forEach(
         result,
-        ({ category_id, chain_id, address, contract_address, balance }) => {
+        ({
+          category_id,
+          chain_id,
+          address,
+          contract_address,
+          balance,
+          contract_ticker_symbol,
+        }) => {
           // console.log('balance', balance);
           balanceObj[
             `${category_id}:${chain_id}:${address}:${contract_address}`
-          ] = balance;
-          // balanceObj['22'] = 11;
+          ] = {
+            balance,
+            chain_id,
+            address,
+            category_id,
+            contract_ticker_symbol,
+          };
         },
       );
     }

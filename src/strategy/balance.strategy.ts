@@ -1,14 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import path from 'path';
 import Piscina from 'piscina';
-import { BalanceService } from '../modules/balance';
-import { MAX_SYNC_DAY } from '../constants';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import { Redis } from 'ioredis';
+import fs from 'fs';
+import os from 'os';
+import { BalanceService } from '../modules/balance';
+import { MAX_SYNC_DAY } from '../constants';
 
 @Injectable()
-class BalanceStrategy {
+class BalanceStrategy implements OnModuleInit {
   private readonly defaultRedisClient: Redis;
   private redisKey = 'tr:balance-top2:list';
 
@@ -18,8 +20,12 @@ class BalanceStrategy {
   ) {
     this.defaultRedisClient = this.redisService.getClient();
   }
+  onModuleInit() {
+    this.handle();
+  }
   @Cron('*/5 * * * * *')
   async handle() {
+    const ratioLimit = 0.02;
     const newest = await this.defaultRedisClient.lindex(this.redisKey, 0);
 
     // console.log('newest', newest);
@@ -31,11 +37,32 @@ class BalanceStrategy {
       filename: path.resolve(__dirname, './work/balance.work.js'),
     });
 
-    const result = await piscina.run({
-      newest: JSON.parse(newest),
-      before: JSON.parse(before),
-    });
-    console.log(result);
+    if (newest && before) {
+      const result = await piscina.run({
+        newest: JSON.parse(newest),
+        before: JSON.parse(before),
+        ratioLimit,
+      });
+      if (result.length) {
+        // send msg
+        /**
+         * category
+         *    chain
+         *      address
+         *        token
+         *            before
+         *            newest
+         *            ratio
+         *
+         */
+        console.log(result);
+        fs.appendFileSync(
+          // path.join(__dirname, '../../../logs/notification.txt'),
+          'logs/notification.txt',
+          JSON.stringify(result) + os.EOL,
+        );
+      }
+    }
   }
 }
 

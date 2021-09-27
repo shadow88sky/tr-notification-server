@@ -17,4 +17,13 @@ export class CategoryService {
   async create(payload) {
     return await this.categoryRepository.save(payload);
   }
+
+  /**
+   * find
+   * @param options
+   * @returns
+   */
+  async find(options) {
+    return await this.categoryRepository.find(options);
+  }
 }

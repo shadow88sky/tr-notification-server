@@ -9,7 +9,6 @@
  import  DailyRotateFile from 'winston-daily-rotate-file';
  import { GetCallerModule } from 'caller-module';
  
- 
  const { format, transports } = winston;
  const { combine, timestamp, label, printf } = format;
  
