@@ -29,6 +29,7 @@ export class AddressController {
    */
   @Post()
   async create(@Body() payload: CreateAddressPayload) {
+    payload.address = payload.address.toLowerCase()
     const result = await this.addressService.create(payload);
 
     /*

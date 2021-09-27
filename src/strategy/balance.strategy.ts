@@ -23,7 +23,11 @@ class BalanceStrategy implements OnModuleInit {
   onModuleInit() {
     this.handle();
   }
-  @Cron('*/5 * * * * *')
+
+  /**
+   *
+   */
+  @Cron('0 */8 * * * *')
   async handle() {
     const ratioLimit = 0.02;
     const newest = await this.defaultRedisClient.lindex(this.redisKey, 0);

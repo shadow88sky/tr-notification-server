@@ -7,12 +7,12 @@ services:
     container_name: app
     depends_on:
       - postgres
+      - redis
     volumes:
-      - ./src:/app/src
-      - .env:/app/.env
-      - logs:/app/logs
-    depends_on:
-      - postgres
+      - .env-docker:/app/.env
+      - ./logs:/app/logs
+    environment: 
+      fileExt: js
 
   nginx:
     build:
@@ -38,6 +38,10 @@ services:
       POSTGRES_DB: tr-notification
     volumes:
       - ./postgres-data:/var/lib/postgresql
+
+  redis:
+    image: redis
+    container_name: app-redis
 
 # volumes:
 #   postgresdbdata:- 

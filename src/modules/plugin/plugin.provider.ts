@@ -23,7 +23,7 @@ function loadPlugin(pluginPath: string): Provider {
 }
 
 function searchPluginsInFolder(folder: string): string[] {
-  return recFindByExt(folder, 'ts');
+  return recFindByExt(folder, process.env.fileExt || 'ts');
 }
 
 function recFindByExt(

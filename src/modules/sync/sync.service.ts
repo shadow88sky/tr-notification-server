@@ -41,7 +41,7 @@ export class SyncService implements OnModuleInit {
   }
 
   async onModuleInit() {
-    // this.syncAddressBalances();
+    this.syncAddressBalances();
     this.syncBalanceToRedis();
   }
 
@@ -143,12 +143,18 @@ export class SyncService implements OnModuleInit {
    * syncBalanceToRedis
    *
    * @description sync latest balance  to redis
+   *
+   *  每隔6分钟执行一次
    */
-  @Cron('*/10 * * * * *')
+  @Cron('0 */6 * * * *')
   async syncBalanceToRedis() {
     const addressList = await this.addressService.find({
       select: ['address'],
     });
+
+    if (!addressList.length) {
+      return;
+    }
 
     let addressArr = [];
     _.forEach(addressList, (item) => {

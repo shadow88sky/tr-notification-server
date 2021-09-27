@@ -1,4 +1,4 @@
-const Decimal = require('Decimal.js');
+const Decimal = require('decimal.js');
 const _ = require('lodash');
 
 module.exports = ({ newest, before, ratioLimit }) => {
@@ -40,7 +40,7 @@ module.exports = ({ newest, before, ratioLimit }) => {
     //   Decimal.abs(ratio).gte(Decimal.abs(0.02)),
     // );
     // return ratio;
-    console.log('ratio', ratio);
+    // console.log('ratio', ratio);
 
     if (Decimal.abs(ratio).gte(Decimal.abs(ratioLimit))) {
       result.push({

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
-import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpExceptionFilter } from 'filters';
 import { AuthModule } from './../auth';
@@ -25,7 +25,6 @@ import { ErrorInterceptor, LoggingInterceptor } from '../../interceptors';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        console.log('configService', configService);
         return {
           type: configService.get('DB_TYPE'),
           host: configService.get('DB_HOST'),
@@ -39,12 +38,19 @@ import { ErrorInterceptor, LoggingInterceptor } from '../../interceptors';
         } as TypeOrmModuleAsyncOptions;
       },
     }),
-    RedisModule.forRoot({
-      closeClient: true,
-      config: {
-        host: '127.0.0.1',
-        port: 6379,
-        password: '',
+    RedisModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        console.log('configService', configService);
+        return {
+          closeClient: true,
+          config: {
+            host: configService.get('REDIS_HOST'),
+            port: +configService.get('REDIS_PORT'),
+            password: configService.get('REDIS_PASSWOR'),
+          },
+        } as RedisModuleOptions;
       },
     }),
     ScheduleModule.forRoot(),
