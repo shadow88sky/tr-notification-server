@@ -29,7 +29,6 @@ export class BalanceService {
    * ignore duplicate key value violates unique constraint "address_contract_updated"
    */
   async handleMany(payload, address) {
-    
     try {
       const arr = [];
       payload.items.forEach((item) => {
@@ -65,7 +64,53 @@ export class BalanceService {
       }
 
       throw error;
-      // 
+      //
+    }
+  }
+
+  /**
+   *
+   * @param payload
+   * @param address
+   * @returns
+   */
+  async handleManyFromDebank(payload, address) {
+    try {
+      const arr = [];
+      payload.forEach((item) => {
+        let balance = new Balance();
+        balance.address = address.address;
+        balance.balance = item.amount;
+        balance.balanceExact = new Decimal(item.amount)
+          .mul(10 ** item.decimals)
+          .toString();
+        balance.balance_usd = new Decimal(item.amount)
+          .mul(item.price || 0)
+          .toString();
+        balance.type = '';
+        balance.category = _.get(address, 'category');
+        balance.quote_currency = 'usd';
+        balance.chain_id = item.chain;
+        balance.contract_decimals = item.decimals;
+        balance.contract_ticker_symbol = item.symbol;
+        balance.contract_name = item.name;
+        balance.contract_address = item.id;
+        balance.quote_rate = item.price || '0';
+        balance.updated_at = payload.updated_at;
+        balance.supports_erc = [];
+        balance.nft_token_id = '';
+        arr.push(balance);
+      });
+
+      return await this.balanceRepository.save(arr);
+    } catch (error) {
+      if (error.code === '23505') {
+        return;
+        // ignore duplicate key value violates unique constraint "address_contract_updated"
+      }
+
+      throw error;
+      //
     }
   }
 

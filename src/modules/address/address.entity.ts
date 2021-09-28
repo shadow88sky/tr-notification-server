@@ -21,8 +21,8 @@ export class Address {
   @Column({ type: 'varchar', nullable: true })
   address: string;
 
-  @Column({ nullable: true })
-  chain_id: number;
+  @Column({ type: 'varchar', nullable: true })
+  chain_id: string;
 
   @Column({ type: 'boolean', nullable: true, default: false })
   is_sync_before: boolean;

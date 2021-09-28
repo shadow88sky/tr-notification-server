@@ -12,7 +12,7 @@ export class CreateAddressPayload {
     required: true,
   })
   @IsNotEmpty()
-  chain_id: number;
+  chain_id: string;
 
   @ApiProperty({
     required: true,

@@ -6,13 +6,14 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Category } from '../category';
 
 @Entity({
   name: 'balances',
 })
-@Unique('address_contract_updated', [
+@Unique('address_chain_id_contract_updated', [
   'address',
   'chain_id',
   'updated_at',
@@ -37,8 +38,8 @@ export class Balance {
   @Column({ type: 'varchar', nullable: true })
   quote_currency: string;
 
-  @Column({ nullable: true })
-  chain_id: number;
+  @Column({ type: 'varchar', nullable: true })
+  chain_id: string;
 
   @Column({ type: 'varchar', nullable: true })
   contract_name: string;
@@ -68,12 +69,16 @@ export class Balance {
   @JoinColumn({ name: 'category_id' })
   category: Category;
 
-  @Column({ type: 'timestamp' })
-  updated_at: Date;
-
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
   })
   created_at: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
+  updated_at: Date;
 }

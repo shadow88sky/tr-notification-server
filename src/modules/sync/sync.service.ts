@@ -13,7 +13,7 @@ import { MAX_SYNC_DAY } from '../../constants';
 import { ConfigService } from '../config';
 import { LoggerService } from '../common/';
 
-const queue = new PQueue({ concurrency: 2 });
+const queue = new PQueue({ concurrency: 5 });
 /*
 
 * * * * * *
@@ -43,7 +43,8 @@ export class SyncService implements OnModuleInit {
   }
 
   async onModuleInit() {
-    this.syncAddressBalances();
+    // this.syncAddressBalances();
+    this.syncAddressBalancesFromDebank();
     this.syncBalanceToRedis();
   }
 
@@ -58,13 +59,38 @@ export class SyncService implements OnModuleInit {
       relations: ['category'],
     });
 
-    addressList.forEach((item) => {
-      queue.add(() => {
+    for (let index = 0; index < addressList.length; index++) {
+      const item = addressList[index];
+      await queue.add(() => {
         this.handleAddressBalances(item);
       });
-    });
+    }
+    // addressList.forEach((item) => {
+    //  await queue.add(() => {
+    //     this.handleAddressBalances(item);
+    //   });
+    // });
 
     //
+  }
+
+  /**
+   * asynAddressBalances
+   * 每隔10分钟执行一次
+   */
+  @Cron('0 */10 * * * *')
+  async syncAddressBalancesFromDebank() {
+    //
+    const addressList = await this.addressService.find({
+      relations: ['category'],
+    });
+
+    for (let index = 0; index < addressList.length; index++) {
+      const item = addressList[index];
+      queue.add(() => {
+        this.handleAddressBalancesFromDebank(item);
+      });
+    }
   }
 
   /**
@@ -229,6 +255,10 @@ export class SyncService implements OnModuleInit {
     await this.defaultRedisClient.ltrim(this.redisKey, 0, 1);
   }
 
+  /**
+   * covalenthq api
+   * @param address
+   */
   async handleAddressBalances(address) {
     try {
       const options = {
@@ -254,6 +284,30 @@ export class SyncService implements OnModuleInit {
   }
 
   /**
+   * debank api
+   * @param address
+   */
+  async handleAddressBalancesFromDebank(address) {
+    try {
+      const options = {
+        method: 'GET',
+        url: `https://openapi.debank.com/v1/user/token_list?id=${address.address}&chain_id=${address.chain_id}&is_all=true&has_balance=true`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        json: true,
+      };
+      const response = await request(options);
+      // console.log('response',response);
+      if (response) {
+        await this.balanceService.handleManyFromDebank(response, address);
+      }
+    } catch (error) {
+      this.loggerService.error(error);
+    }
+  }
+
+  /**
    *
    * @param address
    * @param chain_id
@@ -261,7 +315,7 @@ export class SyncService implements OnModuleInit {
    */
   async handleAddressBalancesHistory(
     address: string,
-    chain_id: number,
+    chain_id: string,
     days: number,
   ) {
     console.log(
