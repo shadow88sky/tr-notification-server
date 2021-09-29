@@ -5,7 +5,6 @@ import { CreateAddressPayload } from './address.payload';
 import { AddressService } from './address.service';
 import { LoggerService } from '../common/';
 import { CustomError } from '../../errors/custom.error';
-import { EHttpStatus } from '../../interfaces/http.interface';
 
 @Controller('address')
 @ApiTags('Address')

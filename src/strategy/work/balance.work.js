@@ -12,13 +12,13 @@ module.exports = ({ newest, before, ratioLimit }) => {
     set.add(key);
   });
 
-  // console.log('set', set);
+  // 
 
-  // _.each([...set], x => console.log(x));
+  // _.each([...set], x => 
 
   let result = [];
   _.each([...set], (item) => {
-    // console.log('item', item);
+    // 
 
     let ratio = 0;
     if (
@@ -34,13 +34,13 @@ module.exports = ({ newest, before, ratioLimit }) => {
         _.get(before, `${item}.balance`);
     }
 
-    // console.log('ratio', ratio);
+    // 
     // console.log(
     //   'Decimal.abs(ratio).gte(Decimal.abs(0.02))',
     //   Decimal.abs(ratio).gte(Decimal.abs(0.02)),
     // );
     // return ratio;
-    // console.log('ratio', ratio);
+    // 
 
     if (Decimal.abs(ratio).gte(Decimal.abs(ratioLimit))) {
       result.push({

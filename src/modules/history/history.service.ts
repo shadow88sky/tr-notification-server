@@ -67,7 +67,6 @@ export class HistoryService implements OnModuleInit {
       }
 
       throw error;
-      // console.log('error', error);
     }
   }
 

@@ -188,7 +188,7 @@ export class SyncService implements OnModuleInit {
     _.forEach(addressList, (item) => {
       addressArr.push(`'${item.address}'`);
     });
-    // console.log('addressList', addressArr.join(','));
+    // 
 
     const sql = `
    SELECT category_id,contract_address,chain_id,address,(array_agg(id ORDER BY updated_at DESC))[1] as id ,
@@ -198,10 +198,10 @@ export class SyncService implements OnModuleInit {
   GROUP BY category_id,contract_address,chain_id,address
    `;
 
-    // console.log('sql', sql);
+    // 
 
     const result = await this.balanceService.query(sql);
-    // console.log('result', result);
+    // 
 
     //   "8961f5f7-c0e7-4ac7-a072-e48ba03f354e":[
     //     {
@@ -234,7 +234,7 @@ export class SyncService implements OnModuleInit {
           balance,
           contract_ticker_symbol,
         }) => {
-          // console.log('balance', balance);
+          // 
           balanceObj[
             `${category_id}:${chain_id}:${address}:${contract_address}`
           ] = {
@@ -298,7 +298,7 @@ export class SyncService implements OnModuleInit {
         json: true,
       };
       const response = await request(options);
-      // console.log('response',response);
+      // 
       if (response) {
         await this.balanceService.handleManyFromDebank(response, address);
       }

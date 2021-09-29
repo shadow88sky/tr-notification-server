@@ -69,20 +69,9 @@ const logFormatter = printf((options: FormatOptions) => {
     options.error && options.error.stack
       ? options.error.stack
       : options.message;
-  const msg = `{"time":"${options.timestamp}","level":"${options.level}","server":"${options.label}",
-     "file":"${options.module}","msg":"${options.message}"}`;
+  const msg = `{"time":"${options.timestamp}","level":"${options.level}","server":"${options.label}"
+  ,"msg":"${options.message}"}`;
   return msg;
-});
-
-const debugTransportFile = new DailyRotateFile({
-  filename: 'debug%DATE%.log',
-  dirname: path.join(process.cwd(), '/logs'),
-  level: 'debug',
-  maxSize: 1024 * 1024 * 10, // 10MB
-  datePattern: 'YYYYMMDD',
-  zippedArchive: true,
-  maxFiles: '14d',
-  format: logFormatter,
 });
 
 const infoTransportFile = new DailyRotateFile({
@@ -105,6 +94,7 @@ export class LoggerService {
       format: combine(
         label({ label: process.env.serverName || 'Log' }), // 服务名取环境变量，否则默认为Log
         timestamp(),
+        format.splat(),
         logFormatter,
       ),
       transports: [
@@ -113,7 +103,6 @@ export class LoggerService {
           level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
           format: consoleFormatter,
         }),
-        debugTransportFile,
         infoTransportFile,
       ],
       // 用来捕捉uncaughtException

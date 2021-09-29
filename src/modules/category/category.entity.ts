@@ -4,11 +4,13 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  Unique,
 } from 'typeorm';
 
 @Entity({
   name: 'categories',
 })
+@Unique('name', ['name'])
 export class Category {
   @PrimaryGeneratedColumn('uuid')
   id: string;

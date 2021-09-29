@@ -32,10 +32,8 @@ class BalanceStrategy implements OnModuleInit {
     const ratioLimit = 0.02;
     const newest = await this.defaultRedisClient.lindex(this.redisKey, 0);
 
-    // console.log('newest', newest);
     const before = await this.defaultRedisClient.lindex(this.redisKey, 1);
-
-    // console.log('before', before);
+ 
     const piscina = new Piscina({
       // The URL must be a file:// URL
       filename: path.resolve(__dirname, './work/balance.work.js'),
@@ -59,7 +57,7 @@ class BalanceStrategy implements OnModuleInit {
          *            ratio
          *
          */
-        console.log(result);
+        
         fs.appendFileSync(
           // path.join(__dirname, '../../../logs/notification.txt'),
           'logs/notification.txt',
