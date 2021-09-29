@@ -17,7 +17,11 @@ import { CategoryModule } from './../category';
 import { ConfigModule, ConfigService } from './../config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ErrorInterceptor, LoggingInterceptor } from '../../interceptors';
+import {
+  ErrorInterceptor,
+  LoggingInterceptor,
+  TransformInterceptor,
+} from '../../interceptors';
 
 @Module({
   imports: [
@@ -75,6 +79,10 @@ import { ErrorInterceptor, LoggingInterceptor } from '../../interceptors';
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformInterceptor,
     },
     {
       provide: APP_FILTER,
