@@ -15,8 +15,8 @@ export type TExceptionOption =
   | TMessage
   | {
       statusCode: number;
-      status: EHttpStatus;
       message: TMessage;
+      status?: EHttpStatus;
       error?: any;
     };
 

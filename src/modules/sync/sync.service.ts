@@ -52,7 +52,7 @@ export class SyncService implements OnModuleInit {
    * asynAddressBalances
    * 每隔10分钟执行一次
    */
-  @Cron('0 */10 * * * *')
+  // @Cron('0 */10 * * * *')
   async syncAddressBalances() {
     //
     const addressList = await this.addressService.find({

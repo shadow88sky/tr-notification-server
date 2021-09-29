@@ -19,6 +19,7 @@ import {
   EntityNotFoundError,
   QueryFailedError,
 } from 'typeorm';
+import { CustomError } from '../errors/custom.error';
 /**
  * @class HttpExceptionFilter
  * @classdesc 拦截全局抛出的所有异常，同时任何错误将在这里被规范化输出 THttpErrorResponse
@@ -28,33 +29,42 @@ export class HttpExceptionFilter implements ExceptionFilter {
   constructor(private readonly loggerService: LoggerService) {}
   catch(exception: HttpException, host: ArgumentsHost) {
     this.loggerService.error(exception);
-    console.log('HttpExceptionFilter', exception.message);
 
     const request = host.switchToHttp().getRequest();
     const response = host.switchToHttp().getResponse();
 
     let message = (exception as any).message.message;
-    let code = 'HttpException';
+    //let code = 'HttpException';
 
     let statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+
     switch (exception.constructor) {
       case HttpException:
         statusCode = (exception as HttpException).getStatus();
         break;
       case QueryFailedError: // this is a TypeOrm error
-        statusCode = HttpStatus.UNPROCESSABLE_ENTITY;
+        statusCode = (exception as any).code;
         message = (exception as unknown as QueryFailedError).message;
-        code = (exception as any).code;
         break;
       case EntityNotFoundError: // this is another TypeOrm error
-        statusCode = HttpStatus.UNPROCESSABLE_ENTITY;
+        statusCode = (exception as any).code;
         message = (exception as unknown as EntityNotFoundError).message;
-        code = (exception as any).code;
         break;
       case CannotCreateEntityIdMapError: // and another
-        statusCode = HttpStatus.UNPROCESSABLE_ENTITY;
+        statusCode = (exception as any).code;
         message = (exception as CannotCreateEntityIdMapError).message;
-        code = (exception as any).code;
+        break;
+      case CustomError:
+        const errorOption: TExceptionOption = response
+          ? (exception.getResponse() as TExceptionOption)
+          : exception.message;
+        const isString = (value): value is TMessage => lodash.isString(value);
+        message = isString(errorOption) ? errorOption : errorOption.message;
+
+        statusCode = isString(errorOption)
+          ? statusCode
+          : errorOption.statusCode;
+
         break;
       default:
         statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -81,7 +91,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     */
     const data = {
-      statusCode: statusCode,
+      statusCode: `${statusCode}`,
       status: EHttpStatus.Error,
       message: message,
       error: exception.stack,
@@ -93,6 +103,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       data.error = `资源不存在`;
       data.message = `接口 ${request.method} -> ${request.url} 无效`;
     }
-    return response.status(statusCode).jsonp(data);
+    // return response.status(statusCode).jsonp(data);
+    return response.status(200).jsonp(data);
   }
 }
