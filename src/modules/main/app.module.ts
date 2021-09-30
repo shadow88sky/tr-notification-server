@@ -10,6 +10,7 @@ import { SnapshotModule } from './../snapshot';
 import { AddressModule } from './../address';
 import { TransactionModule } from './../transaction';
 import { MailModule } from './../mail';
+import { SocialModule } from './../social';
 import { SyncModule } from './../sync';
 import { PluginModule } from './../plugin';
 import { BalanceModule } from './../balance';
@@ -69,6 +70,7 @@ import {
     PluginModule,
     BalanceModule,
     CategoryModule,
+    SocialModule,
   ],
   controllers: [AppController],
   providers: [

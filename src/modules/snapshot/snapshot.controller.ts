@@ -28,6 +28,9 @@ export class SnapshotController {
      }
      */
 
+    // TODO check host 
+
+
     this.loggerService.info('body:payload:%O', payload);
     const id = payload.id.split('/')[1];
     if (!id) throw new CustomError('id not found');
