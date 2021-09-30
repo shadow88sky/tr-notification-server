@@ -10,15 +10,9 @@ export class TwitterService {
     @Inject(TWITTER_OPTIONS) private readonly twitterOptions: TwitterOptions,
   ) {
     this.client = new Twitter(twitterOptions);
-    console.log('this.client', this.client);
   }
 
-  async sendTweet() {
-    // const tweet = await client.post("statuses/update", {
-    //     status: status,
-    //     in_reply_to_status_id: lastTweetID,
-    //     auto_populate_reply_metadata: true
-    //   });
-    //   lastTweetID = tweet.id_str;
+  async post<T = any>(resource: string, body: object): Promise<T> {
+    return this.client.post(resource, body);
   }
 }
