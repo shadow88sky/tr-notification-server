@@ -2,7 +2,7 @@ import { DynamicModule, Module, Provider, ValueProvider } from '@nestjs/common';
 import { TwitterOptionsFactory } from './twitter-async-factory.interface';
 import { TwitterAsyncOptions } from './twitter-async-options.interface';
 import { TwitterOptions } from './twitter-options.interface';
-import { TWITTER_OPTIONS } from './twitter.constants';
+import { TWITTER_OPTIONS } from './twitter.constant';
 import { TwitterService } from './twitter.service';
 
 @Module({

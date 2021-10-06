@@ -1,4 +1,4 @@
 export * from './meta.constant';
 export * from './text.constant';
-
-export const MAX_SYNC_DAY = 355;
+export * from './sync.constant';
+export * from './chain.constant';

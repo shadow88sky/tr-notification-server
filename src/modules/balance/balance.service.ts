@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import Decimal from 'decimal.js';
 import _ from 'lodash';
 import { Balance } from './balance.entity';
+import { ChainEnum } from '../../constants';
 
 @Injectable()
 export class BalanceService {
@@ -90,7 +91,7 @@ export class BalanceService {
         balance.type = '';
         balance.category = _.get(address, 'category');
         balance.quote_currency = 'usd';
-        balance.chain_id = item.chain;
+        balance.chain_id = ChainEnum[item.chain];
         balance.contract_decimals = item.decimals;
         balance.contract_ticker_symbol = item.symbol;
         balance.contract_name = item.name;

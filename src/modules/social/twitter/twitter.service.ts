@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { TwitterOptions } from './twitter-options.interface';
-import { TWITTER_OPTIONS } from './twitter.constants';
+import { TWITTER_OPTIONS } from './twitter.constant';
 import Twitter from 'twitter-lite';
 
 @Injectable()
