@@ -9,7 +9,7 @@ import { Redis } from 'ioredis';
 import { BalanceService } from '../balance';
 import { AddressService } from '../address';
 import { HistoryService } from '../history';
-import { MAX_SYNC_DAY } from '../../constants';
+import { ChainEnum, MAX_SYNC_DAY } from '../../constants';
 import { ConfigService } from '../config';
 import { LoggerService } from '../common/';
 
@@ -188,7 +188,7 @@ export class SyncService implements OnModuleInit {
     _.forEach(addressList, (item) => {
       addressArr.push(`'${item.address}'`);
     });
-    // 
+    //
 
     const sql = `
    SELECT category_id,contract_address,chain_id,address,(array_agg(id ORDER BY updated_at DESC))[1] as id ,
@@ -198,10 +198,10 @@ export class SyncService implements OnModuleInit {
   GROUP BY category_id,contract_address,chain_id,address
    `;
 
-    // 
+    //
 
     const result = await this.balanceService.query(sql);
-    // 
+    //
 
     //   "8961f5f7-c0e7-4ac7-a072-e48ba03f354e":[
     //     {
@@ -234,9 +234,9 @@ export class SyncService implements OnModuleInit {
           balance,
           contract_ticker_symbol,
         }) => {
-          // 
+          //
           balanceObj[
-            `${category_id}:${chain_id}:${address}:${contract_address}`
+            `${category_id}:${ChainEnum[chain_id]}:${address}:${contract_address}`
           ] = {
             balance,
             chain_id,
@@ -298,7 +298,7 @@ export class SyncService implements OnModuleInit {
         json: true,
       };
       const response = await request(options);
-      // 
+      //
       if (response) {
         await this.balanceService.handleManyFromDebank(response, address);
       }

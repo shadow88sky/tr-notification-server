@@ -7,8 +7,11 @@ import {
   UpdateDateColumn,
   JoinColumn,
   ManyToOne,
+  ValueTransformer,
 } from 'typeorm';
 import { Category } from '../category';
+import { ChainEnum } from '../../constants';
+import { lowercase } from '../../transformers';
 
 @Entity({
   name: 'addresses',
@@ -21,7 +24,12 @@ export class Address {
   @Column({ type: 'varchar', nullable: true })
   address: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({
+    type: 'varchar',
+    nullable: true,
+    enum: ChainEnum,
+    transformer: [lowercase],
+  })
   chain_id: string;
 
   @Column({ type: 'boolean', nullable: true, default: false })

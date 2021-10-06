@@ -15,6 +15,7 @@ import { SyncModule } from './../sync';
 import { PluginModule } from './../plugin';
 import { BalanceModule } from './../balance';
 import { CategoryModule } from './../category';
+import { ScriptModule } from './../script';
 import { ConfigModule, ConfigService } from './../config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -71,6 +72,7 @@ import {
     BalanceModule,
     CategoryModule,
     SocialModule,
+    ScriptModule,
   ],
   controllers: [AppController],
   providers: [

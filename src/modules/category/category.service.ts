@@ -26,4 +26,13 @@ export class CategoryService {
   async find(options) {
     return await this.categoryRepository.find(options);
   }
+
+  /**
+   * findOne
+   * @param options
+   * @returns
+   */
+  async findOne(options) {
+    return await this.categoryRepository.findOne(options);
+  }
 }

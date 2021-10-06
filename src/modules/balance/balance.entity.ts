@@ -9,6 +9,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Category } from '../category';
+import { ChainEnum } from '../../constants';
+import { lowercase } from '../../transformers';
 
 @Entity({
   name: 'balances',
@@ -38,7 +40,12 @@ export class Balance {
   @Column({ type: 'varchar', nullable: true })
   quote_currency: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({
+    type: 'varchar',
+    nullable: true,
+    enum: ChainEnum,
+    transformer: [lowercase],
+  })
   chain_id: string;
 
   @Column({ type: 'varchar', nullable: true })
