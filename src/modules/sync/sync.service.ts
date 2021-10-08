@@ -191,11 +191,14 @@ export class SyncService implements OnModuleInit {
     //
 
     const sql = `
-   SELECT category_id,contract_address,chain_id,address,(array_agg(id ORDER BY updated_at DESC))[1] as id ,
-  (array_agg(balance ORDER BY updated_at DESC))[1] as balance ,(array_agg(contract_ticker_symbol ORDER BY updated_at DESC))[1] as contract_ticker_symbol 
-  from balances
-  WHERE balances.address IN (${addressArr.join(',')})
-  GROUP BY category_id,contract_address,chain_id,address
+      SELECT balances.category_id,contract_address,balances.chain_id,address,
+      (array_agg(balances.id ORDER BY balances.updated_at DESC))[1] as id ,categories."name",
+      (array_agg(balances.balance ORDER BY balances.updated_at DESC))[1] as balance ,
+      (array_agg(balances.contract_ticker_symbol ORDER BY balances.updated_at DESC))[1] as contract_ticker_symbol 
+      from balances
+	    INNER JOIN categories on categories."id" = balances.category_id 
+      WHERE balances.address IN (${addressArr.join(',')})
+      GROUP BY balances.category_id,contract_address,chain_id,address,categories."name"
    `;
 
     //
@@ -233,6 +236,7 @@ export class SyncService implements OnModuleInit {
           contract_address,
           balance,
           contract_ticker_symbol,
+          name,
         }) => {
           //
           balanceObj[
@@ -242,6 +246,7 @@ export class SyncService implements OnModuleInit {
             chain_id,
             address,
             category_id,
+            name,
             contract_ticker_symbol,
           };
         },
