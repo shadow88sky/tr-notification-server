@@ -27,3 +27,5 @@ build/config\.gypi
 sqlite-example.sql
 postgres-data
 logs
+
+src/modules/script/csv/initAddress.csv
