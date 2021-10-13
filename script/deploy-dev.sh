@@ -1,11 +1,18 @@
-#!/bin/bash          
+#!/bin/bash
 
 # deploy dev
-# WORKDIR="/data/treasure"
-WORKDIR="/Users/wei/Desktop"
+
+echo "$#"
+
+if [ $# -le 0 ]; then
+    echo "please print work dir path"
+    exit 1
+fi
+
+WORKDIR=$1
 PROJECTDIR="${WORKDIR}/tr-notification-server"
 
-if [ ! -d "$WORKDIR" ];then
+if [ ! -d "$WORKDIR" ]; then
     mkdir $WORKDIR
 fi
 
@@ -16,6 +23,6 @@ fi
 
 cd $PROJECTDIR
 echo PROJECTDIR
-git pull origin dev -f 
-sudo docker-compose build --no-cache  app
+git pull origin dev -f
+sudo docker-compose build --no-cache app
 sudo docker-compose up -d
