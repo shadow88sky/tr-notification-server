@@ -29,3 +29,5 @@ postgres-data
 logs
 
 src/modules/script/csv/initAddress.csv
+.env_docker
+.env-docker

@@ -12,13 +12,13 @@ module.exports = ({ newest, before, ratioLimit }) => {
     set.add(key);
   });
 
-  // 
+  //
 
-  // _.each([...set], x => 
+  // _.each([...set], x =>
 
   let result = [];
   _.each([...set], (item) => {
-    // 
+    //
 
     let ratio = 0;
     if (
@@ -34,13 +34,13 @@ module.exports = ({ newest, before, ratioLimit }) => {
         _.get(before, `${item}.balance`);
     }
 
-    // 
+    //
     // console.log(
     //   'Decimal.abs(ratio).gte(Decimal.abs(0.02))',
     //   Decimal.abs(ratio).gte(Decimal.abs(0.02)),
     // );
     // return ratio;
-    // 
+    //
 
     if (Decimal.abs(ratio).gte(Decimal.abs(ratioLimit))) {
       result.push({
@@ -57,6 +57,7 @@ module.exports = ({ newest, before, ratioLimit }) => {
           _.get(newest, `${item}.contract_ticker_symbol`),
         newest: _.get(newest, `${item}.balance`, 0),
         before: _.get(before, `${item}.balance`, 0),
+        name: _.get(before, `${item}.name`),
         ratio: ratio === 0 ? 0 : ratio.toFixed(2) * 100 + '%',
       });
     }
