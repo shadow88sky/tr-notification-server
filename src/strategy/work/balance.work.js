@@ -59,6 +59,7 @@ module.exports = ({ newest, before, ratioLimit }) => {
         before: _.get(before, `${item}.balance`, 0),
         name: _.get(before, `${item}.name`),
         ratio: ratio === 0 ? 0 : ratio.toFixed(2) * 100 + '%',
+        time_at: new Date().valueOf(),
       });
     }
   });
