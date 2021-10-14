@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import Web3 from 'web3';
+import fs from 'fs';
 import { CreateAddressPayload } from './address.payload';
 import { AddressService } from './address.service';
 import { LoggerService } from '../common/';
@@ -48,6 +49,20 @@ export class AddressController {
     );
     */
 
+    return result;
+  }
+
+  /**
+   * readNoficationFile
+   * @param payload
+   * @returns
+   */
+  @Get('/test/readNoficationFile')
+  async readNoficationFile() {
+    const result = fs.readFileSync('logs/notification.txt', {
+      encoding: 'utf8',
+      flag: 'r',
+    });
     return result;
   }
 }
