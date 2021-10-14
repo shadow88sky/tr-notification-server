@@ -130,4 +130,13 @@ export class BalanceService {
   query(sql) {
     return this.balanceRepository.query(sql);
   }
+
+  /**
+   * delete
+   * @param payload
+   * @returns
+   */
+  async delete(payload) {
+    return await this.balanceRepository.delete(payload);
+  }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CategoryService } from './category.service';
 import { LoggerService } from '../common/';
@@ -30,5 +30,15 @@ export class CategoryController {
     */
 
     return result;
+  }
+
+  /**
+   * paginate
+   * @returns
+   */
+  @Get()
+  async paginate() {
+    this.loggerService.info('paginate');
+    return this.categoryService.paginate({ page: 1, limit: 10 });
   }
 }

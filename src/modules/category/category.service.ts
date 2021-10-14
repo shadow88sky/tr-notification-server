@@ -1,4 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import {
+  paginate,
+  Pagination,
+  IPaginationOptions,
+} from 'nestjs-typeorm-paginate';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from './category.entity';
@@ -9,6 +14,16 @@ export class CategoryService {
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
   ) {}
+
+  /**
+   * paginate
+   * @param options
+   * @returns
+   */
+  async paginate(options: IPaginationOptions): Promise<Pagination<Category>> {
+    return paginate<Category>(this.categoryRepository, options);
+  }
+
   /**
    * create
    * @param payload

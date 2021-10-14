@@ -23,6 +23,6 @@ fi
 
 cd $PROJECTDIR
 echo PROJECTDIR
-git pull origin dev -f
+sudo git pull origin dev -f
 sudo docker-compose build --no-cache app
 sudo docker-compose up -d
