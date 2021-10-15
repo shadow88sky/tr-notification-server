@@ -9,7 +9,7 @@ services:
       - postgres
       - redis
     volumes:
-      - .env-docker:/app/.env
+      - .env:/app/.env
       - ./logs:/app/logs
       - ./data:/app/data
     environment:
