@@ -21,7 +21,11 @@ export class CategoryService {
    * @returns
    */
   async paginate(options: IPaginationOptions): Promise<Pagination<Category>> {
-    return paginate<Category>(this.categoryRepository, options);
+    return paginate<Category>(this.categoryRepository, options, {
+      order: {
+        created_at: 'DESC',
+      },
+    });
   }
 
   /**

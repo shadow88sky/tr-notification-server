@@ -24,7 +24,11 @@ export class SnapshotService {
    * @returns
    */
   async paginate(options: IPaginationOptions): Promise<Pagination<Proposal>> {
-    return paginate<Proposal>(this.proposalRepository, options);
+    return paginate<Proposal>(this.proposalRepository, options, {
+      order: {
+        created: 'DESC',
+      },
+    });
   }
 
   /**
