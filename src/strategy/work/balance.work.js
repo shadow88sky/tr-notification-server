@@ -57,7 +57,7 @@ module.exports = ({ newest, before, ratioLimit }) => {
           _.get(newest, `${item}.contract_ticker_symbol`),
         newest: _.get(newest, `${item}.balance`, 0),
         before: _.get(before, `${item}.balance`, 0),
-        name: _.get(before, `${item}.name`) || _.get(newest, `${item}.name`),
+        category: _.get(before, `${item}.name`) || _.get(newest, `${item}.name`),
         ratio: ratio === 0 ? 0 : ratio.toFixed(2) * 100 + '%',
         time_at: new Date().valueOf(),
       });
