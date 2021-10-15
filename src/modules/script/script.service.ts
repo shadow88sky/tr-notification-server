@@ -21,7 +21,7 @@ export class ScriptService {
     let output = '';
 
     const readStream = fs.createReadStream(
-      path.join(__dirname, './csv/initAddress.csv'),
+      path.join(__dirname, '../../../data/csv/initAddress.csv'),
     );
 
     readStream.on('open', () => {

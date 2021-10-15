@@ -43,24 +43,28 @@ module.exports = ({ newest, before, ratioLimit }) => {
     //
 
     if (Decimal.abs(ratio).gte(Decimal.abs(ratioLimit))) {
-      result.push({
-        category_id:
-          _.get(before, `${item}.category_id`) ||
-          _.get(newest, `${item}.category_id`),
-        address:
-          _.get(before, `${item}.address`) || _.get(newest, `${item}.address`),
-        chain_id:
-          _.get(before, `${item}.chain_id`) ||
-          _.get(newest, `${item}.chain_id`),
-        contract_ticker_symbol:
-          _.get(before, `${item}.contract_ticker_symbol`) ||
-          _.get(newest, `${item}.contract_ticker_symbol`),
-        newest: _.get(newest, `${item}.balance`, 0),
-        before: _.get(before, `${item}.balance`, 0),
-        category: _.get(before, `${item}.name`) || _.get(newest, `${item}.name`),
-        ratio: ratio === 0 ? 0 : ratio.toFixed(2) * 100 + '%',
-        time_at: new Date().valueOf(),
-      });
+      if (ratio) {
+        result.push({
+          category_id:
+            _.get(before, `${item}.category_id`) ||
+            _.get(newest, `${item}.category_id`),
+          address:
+            _.get(before, `${item}.address`) ||
+            _.get(newest, `${item}.address`),
+          chain_id:
+            _.get(before, `${item}.chain_id`) ||
+            _.get(newest, `${item}.chain_id`),
+          contract_ticker_symbol:
+            _.get(before, `${item}.contract_ticker_symbol`) ||
+            _.get(newest, `${item}.contract_ticker_symbol`),
+          newest: _.get(newest, `${item}.balance`, 0),
+          before: _.get(before, `${item}.balance`, 0),
+          category:
+            _.get(before, `${item}.name`) || _.get(newest, `${item}.name`),
+          ratio: ratio === 0 ? 0 : ratio.toFixed(2) * 100 + '%',
+          time_at: new Date().valueOf(),
+        });
+      }
     }
   });
 

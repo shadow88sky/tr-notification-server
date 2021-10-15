@@ -1,4 +1,4 @@
-version: "2"
+version: '2'
 services:
   app:
     build:
@@ -11,7 +11,8 @@ services:
     volumes:
       - .env-docker:/app/.env
       - ./logs:/app/logs
-    environment: 
+      - ./data:/app/data
+    environment:
       fileExt: js
 
   nginx:
@@ -46,6 +47,5 @@ services:
     ports:
       - 6380:6379
     command: redis-server --requirepass ${REDIS_PASSWOR}
-
 # volumes:
-#   postgresdbdata:- 
+#   postgresdbdata:-
