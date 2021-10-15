@@ -258,6 +258,7 @@ export class SyncService implements OnModuleInit {
       JSON.stringify(balanceObj),
     );
     await this.defaultRedisClient.ltrim(this.redisKey, 0, 1);
+    await this.defaultRedisClient.expire(this.redisKey, 60 * 20); // 20 minutes
   }
 
   /**
