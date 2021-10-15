@@ -6,8 +6,7 @@ import { RedisService } from '@liaoliaots/nestjs-redis';
 import { Redis } from 'ioredis';
 import fs from 'fs';
 import os from 'os';
-import { BalanceService } from '../modules/balance';
-import { MAX_SYNC_DAY } from '../constants';
+import { NotificationService } from '../modules/notification';
 
 @Injectable()
 class BalanceStrategy implements OnModuleInit {
@@ -15,7 +14,7 @@ class BalanceStrategy implements OnModuleInit {
   private redisKey = 'tr:balance-top2:list';
 
   constructor(
-    private readonly balanceService: BalanceService,
+    private readonly notificationService: NotificationService,
     private readonly redisService: RedisService,
   ) {
     this.defaultRedisClient = this.redisService.getClient();
@@ -33,7 +32,7 @@ class BalanceStrategy implements OnModuleInit {
     const newest = await this.defaultRedisClient.lindex(this.redisKey, 0);
 
     const before = await this.defaultRedisClient.lindex(this.redisKey, 1);
- 
+
     const piscina = new Piscina({
       // The URL must be a file:// URL
       filename: path.resolve(__dirname, './work/balance.work.js'),
@@ -45,6 +44,7 @@ class BalanceStrategy implements OnModuleInit {
         before: JSON.parse(before),
         ratioLimit,
       });
+
       if (result.length) {
         // send msg
         /**
@@ -57,12 +57,14 @@ class BalanceStrategy implements OnModuleInit {
          *            ratio
          *
          */
-        
+
         fs.appendFileSync(
           // path.join(__dirname, '../../../logs/notification.txt'),
           'logs/notification.txt',
           JSON.stringify(result) + os.EOL,
         );
+
+        this.notificationService.create({ content: result });
       }
     }
   }
