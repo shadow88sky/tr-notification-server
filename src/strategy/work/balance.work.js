@@ -12,14 +12,10 @@ module.exports = ({ newest, before, ratioLimit }) => {
     set.add(key);
   });
 
-  //
-
   // _.each([...set], x =>
 
   let result = [];
   _.each([...set], (item) => {
-    //
-
     let ratio = 0;
     if (
       !before[item] ||
@@ -35,10 +31,11 @@ module.exports = ({ newest, before, ratioLimit }) => {
     }
 
     //
-    // console.log(
-    //   'Decimal.abs(ratio).gte(Decimal.abs(0.02))',
-    //   Decimal.abs(ratio).gte(Decimal.abs(0.02)),
-    // );
+    console.log('ratio', ratio);
+    console.log(
+      'Decimal.abs(ratio).gte(Decimal.abs(0.02))',
+      Decimal.abs(ratio).gte(Decimal.abs(0.02)),
+    );
     // return ratio;
     //
 
@@ -57,11 +54,11 @@ module.exports = ({ newest, before, ratioLimit }) => {
           contract_ticker_symbol:
             _.get(before, `${item}.contract_ticker_symbol`) ||
             _.get(newest, `${item}.contract_ticker_symbol`),
-          newest: _.get(newest, `${item}.balance`, 0),
-          before: _.get(before, `${item}.balance`, 0),
+          newest: _.get(newest, `${item}.balance`, '0'),
+          before: _.get(before, `${item}.balance`, '0'),
           category:
             _.get(before, `${item}.name`) || _.get(newest, `${item}.name`),
-          ratio: ratio === 0 ? 0 : ratio.toFixed(2) * 100 + '%',
+          ratio: Number(ratio).toFixed(2) * 100 + '%',
           time_at: new Date().valueOf(),
         });
       }
