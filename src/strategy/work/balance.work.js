@@ -59,7 +59,6 @@ module.exports = ({ newest, before, ratioLimit }) => {
           category:
             _.get(before, `${item}.name`) || _.get(newest, `${item}.name`),
           ratio: Number(ratio).toFixed(2) * 100 + '%',
-          time_at: new Date().valueOf(),
         });
       }
     }
