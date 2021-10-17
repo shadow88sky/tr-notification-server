@@ -14,7 +14,7 @@ import { SocialModule } from './../social';
 import { SyncModule } from './../sync';
 import { PluginModule } from './../plugin';
 import { BalanceModule } from './../balance';
-import { CategoryModule } from './../category';
+import { TreasuryModule } from './../treasury';
 import { ScriptModule } from './../script';
 import { NotificationModule } from './../notification';
 import { ConfigModule, ConfigService } from './../config';
@@ -71,7 +71,7 @@ import {
     MailModule,
     PluginModule,
     BalanceModule,
-    CategoryModule,
+    TreasuryModule,
     SocialModule,
     ScriptModule,
     NotificationModule,

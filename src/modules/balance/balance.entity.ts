@@ -8,7 +8,7 @@ import {
   JoinColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Category } from '../category';
+import { Treasury } from '../treasury';
 import { ChainEnum } from '../../constants';
 import { lowercase } from '../../transformers';
 
@@ -72,9 +72,9 @@ export class Balance {
   @Column({ type: 'varchar', nullable: true })
   nft_token_id: string;
 
-  @ManyToOne(() => Category)
-  @JoinColumn({ name: 'category_id' })
-  category: Category;
+  @ManyToOne(() => Treasury)
+  @JoinColumn({ name: 'treasury_id' })
+  treasury: Treasury;
 
   @CreateDateColumn({
     type: 'timestamp',

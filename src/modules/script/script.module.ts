@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ScriptController } from './script.controller';
 import { ScriptService } from './script.service';
-import { CategoryModule } from '../category';
+import { TreasuryModule } from '../treasury';
 import { AddressModule } from '../address';
 
 @Module({
-  imports: [CategoryModule,AddressModule],
+  imports: [TreasuryModule,AddressModule],
   controllers: [ScriptController],
   providers: [ScriptService],
 })

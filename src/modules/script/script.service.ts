@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import parse from 'csv-parse/lib/sync';
 import path from 'path';
 import fs from 'fs';
-import { CategoryService } from '../category';
+import { TreasuryService } from '../treasury';
 import { AddressService } from '../address';
 
 @Injectable()
 export class ScriptService {
   constructor(
-    private readonly categoryService: CategoryService,
+    private readonly treasuryService: TreasuryService,
     private readonly addressService: AddressService,
   ) {}
   /**
@@ -44,20 +44,20 @@ export class ScriptService {
         });
         for (let index = 0; index < records.length; index++) {
           const element = records[index];
-          let category = await self.categoryService.findOne({
-            name: element.category,
+          let treasury = await self.treasuryService.findOne({
+            name: element.treasury,
           });
 
-          if (!category) {
-            category = await self.categoryService.create({
-              name: element.category,
+          if (!treasury) {
+            treasury = await self.treasuryService.create({
+              name: element.treasury,
             });
           }
 
           await self.addressService.create({
             address: element.address,
             chain_id: element.chain,
-            category: category.id,
+            treasury: treasury.id,
           });
         }
       } catch (error) {

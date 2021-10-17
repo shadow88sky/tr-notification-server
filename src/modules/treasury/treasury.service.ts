@@ -6,13 +6,13 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Category } from './category.entity';
+import { Treasury } from './treasury.entity';
 
 @Injectable()
-export class CategoryService {
+export class TreasuryService {
   constructor(
-    @InjectRepository(Category)
-    private readonly categoryRepository: Repository<Category>,
+    @InjectRepository(Treasury)
+    private readonly treasuryRepository: Repository<Treasury>,
   ) {}
 
   /**
@@ -20,8 +20,8 @@ export class CategoryService {
    * @param options
    * @returns
    */
-  async paginate(options: IPaginationOptions): Promise<Pagination<Category>> {
-    return paginate<Category>(this.categoryRepository, options, {
+  async paginate(options: IPaginationOptions): Promise<Pagination<Treasury>> {
+    return paginate<Treasury>(this.treasuryRepository, options, {
       order: {
         created_at: 'DESC',
       },
@@ -34,7 +34,7 @@ export class CategoryService {
    * @returns
    */
   async create(payload) {
-    return await this.categoryRepository.save(payload);
+    return await this.treasuryRepository.save(payload);
   }
 
   /**
@@ -43,7 +43,7 @@ export class CategoryService {
    * @returns
    */
   async find(options) {
-    return await this.categoryRepository.find(options);
+    return await this.treasuryRepository.find(options);
   }
 
   /**
@@ -52,6 +52,6 @@ export class CategoryService {
    * @returns
    */
   async findOne(options) {
-    return await this.categoryRepository.findOne(options);
+    return await this.treasuryRepository.findOne(options);
   }
 }

@@ -42,7 +42,7 @@ export class BalanceService {
           .mul(item.quote_rate || 0)
           .toString();
         balance.type = item.type;
-        balance.category = _.get(address, 'category');
+        balance.treasury = _.get(address, 'treasury');
         balance.quote_currency = payload.quote_currency;
         balance.chain_id = payload.chain_id;
         balance.contract_decimals = item.contract_decimals;
@@ -88,7 +88,7 @@ export class BalanceService {
           .mul(item.price || 0)
           .toString();
         balance.type = '';
-        balance.category = _.get(address, 'category');
+        balance.treasury = _.get(address, 'treasury');
         balance.quote_currency = 'usd';
         balance.chain_id = item.chain;
         balance.contract_decimals = item.decimals;

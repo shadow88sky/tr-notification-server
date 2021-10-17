@@ -9,7 +9,7 @@ import {
 @Entity({
   name: 'mails',
 })
-export class Category {
+export class Mail {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

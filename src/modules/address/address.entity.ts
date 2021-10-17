@@ -9,7 +9,7 @@ import {
   ManyToOne,
   ValueTransformer,
 } from 'typeorm';
-import { Category } from '../category';
+import { Treasury } from '../treasury';
 import { ChainEnum } from '../../constants';
 import { lowercase } from '../../transformers';
 
@@ -35,9 +35,9 @@ export class Address {
   @Column({ type: 'boolean', nullable: true, default: false })
   is_sync_before: boolean;
 
-  @ManyToOne(() => Category)
-  @JoinColumn({ name: 'category_id' })
-  category: Category;
+  @ManyToOne(() => Treasury)
+  @JoinColumn({ name: 'treasury_id' })
+  treasury: Treasury;
 
   @CreateDateColumn({
     type: 'timestamp',

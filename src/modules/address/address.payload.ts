@@ -20,5 +20,5 @@ export class CreateAddressPayload {
     required: true,
   })
   @IsNotEmpty()
-  category: string;
+  treasury: string;
 }

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
-export class CreateCategoryPayload {
+export class CreateTreasuryPayload {
   @ApiProperty({
     required: true,
   })

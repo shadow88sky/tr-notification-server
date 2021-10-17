@@ -31,7 +31,7 @@ export class AddressService {
    */
   async paginate(options: IPaginationOptions): Promise<Pagination<Address>> {
     return paginate<Address>(this.addressRepository, options, {
-      relations: ['category'],
+      relations: ['treasury'],
       order: {
         created_at: 'DESC',
       },

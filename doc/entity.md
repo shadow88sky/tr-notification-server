@@ -1,18 +1,18 @@
 
 
-category
+treasuries
     id
     name
 
 
 address
     id
-    category_id
+    treasury_id
 
 balance
     id
     address_id
-    category_id       
+    treasury_id       
 
 
 

@@ -14,13 +14,13 @@ export class NotificationPayload {
     required: true,
   })
   @IsNotEmpty()
-  category_id: string;
+  treasury_id: string;
 
   @ApiProperty({
     required: true,
   })
   @IsNotEmpty()
-  category: string;
+  treasury: string;
 
   @ApiProperty({
     required: true,

@@ -8,10 +8,10 @@ import {
 } from 'typeorm';
 
 @Entity({
-  name: 'categories',
+  name: 'treasuries',
 })
 @Unique('name', ['name'])
-export class Category {
+export class Treasury {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

@@ -56,7 +56,7 @@ export class SyncService implements OnModuleInit {
   async syncAddressBalances() {
     //
     const addressList = await this.addressService.find({
-      relations: ['category'],
+      relations: ['treasury'],
     });
 
     for (let index = 0; index < addressList.length; index++) {
@@ -82,7 +82,7 @@ export class SyncService implements OnModuleInit {
   async syncAddressBalancesFromDebank() {
     //
     const addressList = await this.addressService.find({
-      relations: ['category'],
+      relations: ['treasury'],
     });
 
     for (let index = 0; index < addressList.length; index++) {
@@ -191,14 +191,14 @@ export class SyncService implements OnModuleInit {
     //
 
     const sql = `
-      SELECT balances.category_id,contract_address,balances.chain_id,address,
-      (array_agg(balances.id ORDER BY balances.updated_at DESC))[1] as id ,categories."name",
+      SELECT balances.treasury_id,contract_address,balances.chain_id,address,
+      (array_agg(balances.id ORDER BY balances.updated_at DESC))[1] as id ,treasuries."name",
       (array_agg(balances.balance ORDER BY balances.updated_at DESC))[1] as balance ,
       (array_agg(balances.contract_ticker_symbol ORDER BY balances.updated_at DESC))[1] as contract_ticker_symbol 
       from balances
-	    INNER JOIN categories on categories."id" = balances.category_id 
+	    INNER JOIN treasuries on treasuries."id" = balances.treasury_id 
       WHERE balances.address IN (${addressArr.join(',')})
-      GROUP BY balances.category_id,contract_address,chain_id,address,categories."name"
+      GROUP BY balances.treasury_id,contract_address,chain_id,address,treasuries."name"
    `;
 
     //
@@ -216,7 +216,7 @@ export class SyncService implements OnModuleInit {
     //     }
     // ]
     // {
-    //   category_id: '8961f5f7-c0e7-4ac7-a072-e48ba03f354e',
+    //   treasury_id: '8961f5f7-c0e7-4ac7-a072-e48ba03f354e',
     //   contract_address: '0x2b4742593da55d694cf563563ef161c62bdc1d09',
     //   chain_id: 1,
     //   address: '0x4750c43867ef5f89869132eccf19b9b6c4286e1a',
@@ -230,7 +230,7 @@ export class SyncService implements OnModuleInit {
       _.forEach(
         result,
         ({
-          category_id,
+          treasury_id,
           chain_id,
           address,
           contract_address,
@@ -240,12 +240,12 @@ export class SyncService implements OnModuleInit {
         }) => {
           //
           balanceObj[
-            `${category_id}:${ChainEnum[chain_id]}:${address}:${contract_address}`
+            `${treasury_id}:${ChainEnum[chain_id]}:${address}:${contract_address}`
           ] = {
             balance,
             chain_id,
             address,
-            category_id,
+            treasury_id,
             name,
             contract_ticker_symbol,
           };

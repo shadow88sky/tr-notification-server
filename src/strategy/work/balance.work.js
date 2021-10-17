@@ -42,9 +42,9 @@ module.exports = ({ newest, before, ratioLimit }) => {
     if (Decimal.abs(ratio).gte(Decimal.abs(ratioLimit))) {
       if (ratio) {
         result.push({
-          category_id:
-            _.get(before, `${item}.category_id`) ||
-            _.get(newest, `${item}.category_id`),
+          treasury_id:
+            _.get(before, `${item}.treasury_id`) ||
+            _.get(newest, `${item}.treasury_id`),
           address:
             _.get(before, `${item}.address`) ||
             _.get(newest, `${item}.address`),
@@ -56,7 +56,7 @@ module.exports = ({ newest, before, ratioLimit }) => {
             _.get(newest, `${item}.contract_ticker_symbol`),
           newest: _.get(newest, `${item}.balance`, '0'),
           before: _.get(before, `${item}.balance`, '0'),
-          category:
+          treasury:
             _.get(before, `${item}.name`) || _.get(newest, `${item}.name`),
           ratio: Number(ratio).toFixed(2) * 100 + '%',
         });

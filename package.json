@@ -50,6 +50,7 @@
     "moment": "^2.29.1",
     "mysql": "^2.18.1",
     "nestjs-typeorm-paginate": "^2.6.3",
+    "node-telegram-bot-api": "^0.54.0",
     "nodemailer": "^6.6.5",
     "p-queue": "6.6.2",
     "passport": "^0.4.1",

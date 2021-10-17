@@ -48,13 +48,6 @@ class BalanceStrategy implements OnModuleInit {
       if (result.length) {
         // send msg
         /**
-         * category
-         *    chain
-         *      address
-         *        token
-         *            before
-         *            newest
-         *            ratio
          *
          */
 
