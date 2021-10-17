@@ -9,7 +9,7 @@ export class TwitterService {
   constructor(
     @Inject(TWITTER_OPTIONS) private readonly twitterOptions: TwitterOptions,
   ) {
-    this.client = new Twitter(twitterOptions);
+    this.client = new Twitter(this.twitterOptions);
   }
 
   async post<T = any>(resource: string, body: object): Promise<T> {

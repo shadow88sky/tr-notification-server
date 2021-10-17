@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
-import { TwitterModule } from './twitter/twitter.module';
+import Agent from 'socks5-https-client/lib/Agent';
+import { TwitterModule } from './twitter';
+import { TelegramModule, TelegramService } from './telegram';
 import { ConfigModule, ConfigService } from '../config';
 @Module({
   imports: [
@@ -15,7 +17,30 @@ import { ConfigModule, ConfigService } from '../config';
       }),
       inject: [ConfigService],
     }),
+    TelegramModule.forRootAsync({
+      imports: [ConfigModule], // import module if not enabled globally
+      useFactory: async (config: ConfigService) => {
+        return {
+          token: config.get('TELEGRAM_TOKEN'),
+          options: {
+            polling: true,
+            request: {
+              agentClass: Agent,
+              agentOptions: {
+                socksHost: 'socks5://127.0.0.1',
+                socksPort: '7890',
+                // If authorization is needed:
+                // socksUsername: process.env.PROXY_SOCKS5_USERNAME,
+                // socksPassword: process.env.PROXY_SOCKS5_PASSWORD
+              },
+            },
+          },
+        };
+      },
+      inject: [ConfigService],
+    }),
   ],
   providers: [],
+  exports: [],
 })
 export class SocialModule {}

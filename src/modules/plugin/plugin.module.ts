@@ -2,13 +2,14 @@ import { DynamicModule, Module } from '@nestjs/common';
 import _ from 'lodash';
 import { PluginService } from './plugin.service';
 import { BalanceModule } from './../balance';
-import { NotificationModule, NotificationService } from './../notification';
+import { SocialModule } from './../social';
+import { NotificationModule } from './../notification';
 import { createStrategyProviders } from './plugin.provider';
 
 const strategyProviders = createStrategyProviders();
 
 @Module({
-  imports: [BalanceModule, NotificationModule],
+  imports: [BalanceModule, NotificationModule, SocialModule],
   providers: [PluginService, ...strategyProviders],
 })
 export class PluginModule {}

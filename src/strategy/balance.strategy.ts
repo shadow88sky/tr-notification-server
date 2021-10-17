@@ -7,6 +7,7 @@ import { Redis } from 'ioredis';
 import fs from 'fs';
 import os from 'os';
 import { NotificationService } from '../modules/notification';
+import { TelegramService } from '../modules/social';
 
 @Injectable()
 class BalanceStrategy implements OnModuleInit {
@@ -16,6 +17,7 @@ class BalanceStrategy implements OnModuleInit {
   constructor(
     private readonly notificationService: NotificationService,
     private readonly redisService: RedisService,
+    private readonly telegramService: TelegramService,
   ) {
     this.defaultRedisClient = this.redisService.getClient();
   }
@@ -50,14 +52,14 @@ class BalanceStrategy implements OnModuleInit {
         /**
          *
          */
-
         fs.appendFileSync(
           // path.join(__dirname, '../../../logs/notification.txt'),
           'logs/notification.txt',
           JSON.stringify(result) + os.EOL,
         );
 
-        this.notificationService.create({ content: result });
+        await this.notificationService.create({ content: result });
+        await this.telegramService.sendMessage();
       }
     }
   }

@@ -31,11 +31,11 @@ module.exports = ({ newest, before, ratioLimit }) => {
     }
 
     //
-    console.log('ratio', ratio);
-    console.log(
-      'Decimal.abs(ratio).gte(Decimal.abs(0.02))',
-      Decimal.abs(ratio).gte(Decimal.abs(0.02)),
-    );
+    // console.log('ratio', ratio);
+    // console.log(
+    //   'Decimal.abs(ratio).gte(Decimal.abs(0.02))',
+    //   Decimal.abs(ratio).gte(Decimal.abs(0.02)),
+    // );
     // return ratio;
     //
 
