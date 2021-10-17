@@ -42,4 +42,13 @@ export class Proposal {
 
   @Column({ type: 'varchar', nullable: true })
   network: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  space_id: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  space_name: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  strategies: string;
 }

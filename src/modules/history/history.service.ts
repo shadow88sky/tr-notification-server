@@ -5,7 +5,7 @@ import _ from 'lodash';
 import Decimal from 'decimal.js';
 
 import { History } from './history.entity';
-import { AddressService } from 'modules/address';
+import { AddressService } from '../address';
 import { MAX_SYNC_DAY } from '../../constants';
 
 @Injectable()
@@ -67,7 +67,6 @@ export class HistoryService implements OnModuleInit {
       }
 
       throw error;
-      // console.log('error', error);
     }
   }
 

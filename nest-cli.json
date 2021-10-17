@@ -1,5 +1,12 @@
 {
   "language": "ts",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "assets": ["modules/mail/templates/*", "strategy/work/*"],
+    "watchAssets": true
+  },
+  "generateOptions": {
+    "spec": false
+  }
 }

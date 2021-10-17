@@ -13,6 +13,7 @@ yarn-error.log
 
 # environment
 .env
+.env-docker
 
 # build
 /dist
@@ -24,3 +25,10 @@ yarn-error.log
 build/config\.gypi
 
 sqlite-example.sql
+postgres-data
+logs
+
+src/modules/script/csv/initAddress.csv
+.env_docker
+.env-docker
+data

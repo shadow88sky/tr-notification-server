@@ -4,13 +4,20 @@ import {
   PrimaryGeneratedColumn,
   Unique,
   CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  UpdateDateColumn,
 } from 'typeorm';
+import { Category } from '../category';
+import { ChainEnum } from '../../constants';
+import { lowercase } from '../../transformers';
 
 @Entity({
   name: 'balances',
 })
-@Unique('address_contract_updated', [
+@Unique('address_chain_id_contract_updated', [
   'address',
+  'chain_id',
   'updated_at',
   'contract_address',
 ])
@@ -27,11 +34,19 @@ export class Balance {
   @Column({ type: 'varchar', nullable: true })
   balanceExact: string;
 
+  @Column({ type: 'varchar', nullable: true, default: '0' })
+  balance_usd: string;
+
   @Column({ type: 'varchar', nullable: true })
   quote_currency: string;
 
-  @Column({ nullable: true })
-  chain_id: number;
+  @Column({
+    type: 'varchar',
+    nullable: true,
+    enum: ChainEnum,
+    transformer: [lowercase],
+  })
+  chain_id: string;
 
   @Column({ type: 'varchar', nullable: true })
   contract_name: string;
@@ -57,12 +72,20 @@ export class Balance {
   @Column({ type: 'varchar', nullable: true })
   nft_token_id: string;
 
-  @Column({ type: 'timestamp' })
-  updated_at: Date;
+  @ManyToOne(() => Category)
+  @JoinColumn({ name: 'category_id' })
+  category: Category;
 
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
   })
   created_at: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
+  updated_at: Date;
 }

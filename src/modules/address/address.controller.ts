@@ -1,16 +1,18 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import Web3 from 'web3';
+import fs from 'fs';
 import { CreateAddressPayload } from './address.payload';
 import { AddressService } from './address.service';
-import { SyncService } from '../sync';
-import { MAX_SYNC_DAY } from '../../constants';
+import { LoggerService } from '../common/';
+import { CustomError } from '../../errors/custom.error';
 
 @Controller('address')
 @ApiTags('Address')
 export class AddressController {
   constructor(
     private readonly addressService: AddressService,
-    private readonly syncService: SyncService,
+    private readonly loggerService: LoggerService,
   ) {}
 
   /**
@@ -19,6 +21,7 @@ export class AddressController {
    */
   @Get()
   async paginate() {
+    this.loggerService.info('paginate');
     return this.addressService.paginate({ page: 1, limit: 10 });
   }
 
@@ -29,13 +32,37 @@ export class AddressController {
    */
   @Post()
   async create(@Body() payload: CreateAddressPayload) {
+    if (!Web3.utils.isAddress(payload.address)) {
+      throw new CustomError({
+        statusCode: 422,
+        message: 'invalid address',
+      });
+    }
+    payload.address = payload.address.toLowerCase();
     const result = await this.addressService.create(payload);
-    this.syncService.handleAddressBalancesHistory(
+
+    /*
+    await this.syncService.handleAddressBalancesHistory(
       payload.address,
       payload.chain_id,
       MAX_SYNC_DAY,
     );
+    */
 
+    return result;
+  }
+
+  /**
+   * readNoficationFile
+   * @param payload
+   * @returns
+   */
+  @Get('/test/readNoficationFile')
+  async readNoficationFile() {
+    const result = fs.readFileSync('logs/notification.txt', {
+      encoding: 'utf8',
+      flag: 'r',
+    });
     return result;
   }
 }

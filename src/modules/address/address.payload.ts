@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty } from 'class-validator';
+import { ChainEnum } from '../../constants';
 
 export class CreateAddressPayload {
   @ApiProperty({
@@ -12,5 +13,12 @@ export class CreateAddressPayload {
     required: true,
   })
   @IsNotEmpty()
-  chain_id: number;
+  @IsEnum(ChainEnum, { each: true })
+  chain_id: string;
+
+  @ApiProperty({
+    required: true,
+  })
+  @IsNotEmpty()
+  category: string;
 }

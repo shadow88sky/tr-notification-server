@@ -1,13 +1,17 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { CustomError } from '../../errors';
 import { WebhookPayload } from './proposal.payload';
-
+import { LoggerService, QueryParams } from '../common/';
 import { SnapshotService } from './snapshot.service';
 
 @Controller('snapshot')
 @ApiTags('Snapshot')
 export class SnapshotController {
-  constructor(private readonly snapshotService: SnapshotService) {}
+  constructor(
+    private readonly snapshotService: SnapshotService,
+    private readonly loggerService: LoggerService,
+  ) {}
 
   /**
    *
@@ -24,11 +28,26 @@ export class SnapshotController {
      }
      */
 
+    // TODO check host 
+
+
+    this.loggerService.info('body:payload:%O', payload);
     const id = payload.id.split('/')[1];
+    if (!id) throw new CustomError('id not found');
     const response = await this.snapshotService.querySnapshotProposals({
       id,
     });
 
     return this.snapshotService.handleWebhook(response.proposal);
+  }
+
+  /**
+   * paginate
+   * @returns
+   */
+  @Get()
+  async paginate(@QueryParams() { options }) {
+    this.loggerService.info('query:paginate:%O', options);
+    return this.snapshotService.paginate(options);
   }
 }

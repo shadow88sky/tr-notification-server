@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { request, gql } from 'graphql-request';
+import {
+  paginate,
+  Pagination,
+  IPaginationOptions,
+} from 'nestjs-typeorm-paginate';
+import _ from 'lodash';
 import { Repository } from 'typeorm';
 import { Proposal } from './proposal.entity';
 import { ProposalFields } from './proposal.payload';
@@ -11,6 +17,19 @@ export class SnapshotService {
     @InjectRepository(Proposal)
     private readonly proposalRepository: Repository<Proposal>,
   ) {}
+
+  /**
+   * paginate
+   * @param options
+   * @returns
+   */
+  async paginate(options: IPaginationOptions): Promise<Pagination<Proposal>> {
+    return paginate<Proposal>(this.proposalRepository, options, {
+      order: {
+        created: 'DESC',
+      },
+    });
+  }
 
   /**
    * create
@@ -31,6 +50,9 @@ export class SnapshotService {
     proposal.created = payload.created;
     proposal.plugins = payload.plugins;
     proposal.network = payload.network;
+    proposal.space_id = _.get(payload, 'space.id');
+    proposal.space_name = _.get(payload, 'space.name');
+    proposal.strategies = _.get(payload, 'strategies');
 
     return await this.proposalRepository.save(proposal);
   }
