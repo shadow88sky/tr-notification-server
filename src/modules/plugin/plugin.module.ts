@@ -3,13 +3,14 @@ import _ from 'lodash';
 import { PluginService } from './plugin.service';
 import { BalanceModule } from './../balance';
 import { SocialModule } from './../social';
+import { ConfigModule } from './../config';
 import { NotificationModule } from './../notification';
 import { createStrategyProviders } from './plugin.provider';
 
 const strategyProviders = createStrategyProviders();
 
 @Module({
-  imports: [BalanceModule, NotificationModule, SocialModule],
+  imports: [BalanceModule, NotificationModule, SocialModule, ConfigModule],
   providers: [PluginService, ...strategyProviders],
 })
 export class PluginModule {}

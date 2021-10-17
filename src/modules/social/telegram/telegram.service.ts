@@ -14,7 +14,13 @@ export class TelegramService {
       this.telegramOptions.options,
     );
   }
-  sendMessage() {
-    this.bot.sendMessage(-662695190, 'hello');
+
+  /**
+   * 
+   * @param chain_id 
+   * @param message 
+   */
+  sendMessage(chain_id: Number, message: string) {
+    this.bot.sendMessage(chain_id, message);
   }
 }

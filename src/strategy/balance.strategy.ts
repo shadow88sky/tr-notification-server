@@ -8,6 +8,7 @@ import fs from 'fs';
 import os from 'os';
 import { NotificationService } from '../modules/notification';
 import { TelegramService } from '../modules/social';
+import { ConfigService } from '../modules/config';
 
 @Injectable()
 class BalanceStrategy implements OnModuleInit {
@@ -18,10 +19,15 @@ class BalanceStrategy implements OnModuleInit {
     private readonly notificationService: NotificationService,
     private readonly redisService: RedisService,
     private readonly telegramService: TelegramService,
+    private readonly configService: ConfigService,
   ) {
     this.defaultRedisClient = this.redisService.getClient();
   }
   onModuleInit() {
+    this.telegramService.sendMessage(
+      Number(this.configService.get('TELEGRAM_CHAT_ID')),
+      'notification',
+    );
     this.handle();
   }
 
@@ -58,8 +64,14 @@ class BalanceStrategy implements OnModuleInit {
           JSON.stringify(result) + os.EOL,
         );
 
-        await this.notificationService.create({ content: result });
-        await this.telegramService.sendMessage();
+        const notification = await this.notificationService.create({
+          content: result,
+        });
+
+        await this.telegramService.sendMessage(
+          Number(this.configService.get('TELEGRAM_CHAT_ID')),
+          notification,
+        );
       }
     }
   }

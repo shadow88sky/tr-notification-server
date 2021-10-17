@@ -20,20 +20,29 @@ import { ConfigModule, ConfigService } from '../config';
     TelegramModule.forRootAsync({
       imports: [ConfigModule], // import module if not enabled globally
       useFactory: async (config: ConfigService) => {
+        if (config.get('SOCKS_HOST') && config.get('SOCKS_PORT')) {
+          return {
+            token: config.get('TELEGRAM_TOKEN'),
+            options: {
+              polling: true,
+              request: {
+                agentClass: Agent,
+                agentOptions: {
+                  socksHost: config.get('SOCKS_HOST'),
+                  socksPort: config.get('SOCKS_PORT'),
+                  // If authorization is needed:
+                  // socksUsername: process.env.PROXY_SOCKS5_USERNAME,
+                  // socksPassword: process.env.PROXY_SOCKS5_PASSWORD
+                },
+              },
+            },
+          };
+        }
+
         return {
           token: config.get('TELEGRAM_TOKEN'),
           options: {
             polling: true,
-            request: {
-              agentClass: Agent,
-              agentOptions: {
-                socksHost: 'socks5://127.0.0.1',
-                socksPort: '7890',
-                // If authorization is needed:
-                // socksUsername: process.env.PROXY_SOCKS5_USERNAME,
-                // socksPassword: process.env.PROXY_SOCKS5_PASSWORD
-              },
-            },
           },
         };
       },
