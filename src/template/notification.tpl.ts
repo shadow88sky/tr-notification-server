@@ -6,7 +6,7 @@ export const tpl = `
       chain:{{chain_id}}
       symbol:{{contract_ticker_symbol}}
       newest:{{newest}}
-      before:{{newest}}
+      before:{{before}}
       ratio:{{ratio}}
       ----------------------------------
     {{/each}}
