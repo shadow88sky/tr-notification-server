@@ -39,6 +39,7 @@ import {
           username: configService.get('DB_USERNAME'),
           password: configService.get('DB_PASSWORD'),
           database: configService.get('DB_DATABASE'),
+          timezone: configService.get('DB_TIMEZONE'),
           logging: configService.get('DB_LOGGING') === 'true',
           entities: [__dirname + './../**/**.entity{.ts,.js}'],
           synchronize: configService.get('DB_SYNC') === 'true',

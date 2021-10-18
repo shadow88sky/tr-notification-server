@@ -6,6 +6,7 @@ import { RedisService } from '@liaoliaots/nestjs-redis';
 import { Redis } from 'ioredis';
 import fs from 'fs';
 import os from 'os';
+import moment from 'moment';
 import handlebars from 'handlebars';
 import { NotificationService } from '../modules/notification';
 import { TelegramService } from '../modules/social';
@@ -99,9 +100,9 @@ class BalanceStrategy implements OnModuleInit {
         });
 
         if (notification) {
-          // notification.created_at = moment(notification.created_at).format(
-          //   'YYYY-MM-DD HH:mm:ss',
-          // );
+          notification.created_at = moment(notification.created_at).format(
+            'YYYY-MM-DD HH:mm:ss',
+          );
           this.telegramService.sendMessage(
             Number(this.configService.get('TELEGRAM_CHAT_ID')),
             this.template(notification),

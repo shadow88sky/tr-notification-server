@@ -3,6 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import Decimal from 'decimal.js';
 import _ from 'lodash';
+import {
+  IPaginationOptions,
+  Pagination,
+  paginate,
+} from 'nestjs-typeorm-paginate';
 import { Balance } from './balance.entity';
 
 @Injectable()
@@ -138,5 +143,20 @@ export class BalanceService {
    */
   async delete(payload) {
     return await this.balanceRepository.delete(payload);
+  }
+
+  /**
+   * paginate
+   * @param options
+   * @returns
+   */
+  async paginate(
+    options: IPaginationOptions,
+  ): Promise<Pagination<Balance>> {
+    return paginate<Balance>(this.balanceRepository, options, {
+      order: {
+        created_at: 'DESC',
+      },
+    });
   }
 }
