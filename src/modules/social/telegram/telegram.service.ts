@@ -1,9 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Scope } from '@nestjs/common';
 import TelegramBot from 'node-telegram-bot-api';
 import { TelegramOptions } from './telegram-options.interface';
 import { TELEGRAM_OPTIONS } from './telegram.constant';
 
-@Injectable()
+@Injectable({ scope: Scope.DEFAULT })
 export class TelegramService {
   private bot: TelegramBot;
   constructor(
@@ -16,9 +16,9 @@ export class TelegramService {
   }
 
   /**
-   * 
-   * @param chain_id 
-   * @param message 
+   *
+   * @param chain_id
+   * @param message
    */
   sendMessage(chain_id: Number, message: string) {
     this.bot.sendMessage(chain_id, message);

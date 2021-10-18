@@ -24,10 +24,6 @@ class BalanceStrategy implements OnModuleInit {
     this.defaultRedisClient = this.redisService.getClient();
   }
   onModuleInit() {
-    this.telegramService.sendMessage(
-      Number(this.configService.get('TELEGRAM_CHAT_ID')),
-      'notification',
-    );
     this.handle();
   }
 
@@ -68,10 +64,12 @@ class BalanceStrategy implements OnModuleInit {
           content: result,
         });
 
-        await this.telegramService.sendMessage(
-          Number(this.configService.get('TELEGRAM_CHAT_ID')),
-          notification,
-        );
+        if (notification) {
+          this.telegramService.sendMessage(
+            Number(this.configService.get('TELEGRAM_CHAT_ID')),
+            notification,
+          );
+        }
       }
     }
   }
