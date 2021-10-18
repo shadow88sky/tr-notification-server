@@ -100,9 +100,9 @@ class BalanceStrategy implements OnModuleInit {
         });
 
         if (notification) {
-          notification.created_at = moment(notification.created_at).format(
-            'YYYY-MM-DD HH:mm:ss',
-          );
+          notification.created_at = moment(notification.created_at)
+            .add(8, 'hours')
+            .format('YYYY-MM-DD HH:mm:ss');
           this.telegramService.sendMessage(
             Number(this.configService.get('TELEGRAM_CHAT_ID')),
             this.template(notification),
