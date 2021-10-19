@@ -64,11 +64,20 @@ import { App } from './app.entity';
       },
     }),
     ScheduleModule.forRoot(),
-    GraphQLModule.forRoot({
-      debug: true,
-      playground: true,
-      autoSchemaFile: './src/graphql/schema.gql',
-      useGlobalPrefix: true,
+    GraphQLModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        autoSchemaFile:
+          configService.get('GRAPHQL_SCHEMA_DEST') ||
+          './src/graphql/schema.gql',
+        debug: configService.get('GRAPHQL_DEBUG') === '1',
+        playground: configService.get('PLAYGROUND_ENABLE') === '1',
+        useGlobalPrefix: true,
+        context: ({ req }: { req: Request }) => ({
+          req,
+        }),
+      }),
+      inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([App]),
     ConfigModule,
