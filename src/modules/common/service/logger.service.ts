@@ -152,6 +152,7 @@ export class LoggerService {
         GetCallerModule(2).callSite.getFileName(),
       requestId: (options && options.requestId) || null,
     };
+
     this.defaultLog.error(JSON.stringify(message.message) + message.stack, {
       options,
       ...meta,

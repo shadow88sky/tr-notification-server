@@ -4,8 +4,6 @@ import path from 'path';
 import Piscina from 'piscina';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import { Redis } from 'ioredis';
-import fs from 'fs';
-import os from 'os';
 import moment from 'moment';
 import handlebars from 'handlebars';
 import { NotificationService } from '../modules/notification';
@@ -89,11 +87,11 @@ class BalanceStrategy implements OnModuleInit {
         /**
          *
          */
-        fs.appendFileSync(
-          // path.join(__dirname, '../../../logs/notification.txt'),
-          'logs/notification.txt',
-          JSON.stringify(result) + os.EOL,
-        );
+        // fs.appendFileSync(
+        //   // path.join(__dirname, '../../../logs/notification.txt'),
+        //   'logs/notification.txt',
+        //   JSON.stringify(result) + os.EOL,
+        // );
 
         const notification = await this.notificationService.create({
           content: result,

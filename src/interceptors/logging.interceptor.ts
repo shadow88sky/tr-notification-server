@@ -12,6 +12,7 @@ import {
   CallHandler,
   ExecutionContext,
 } from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
 import { ConfigService } from '../modules/config';
 
 @Injectable()
@@ -28,6 +29,16 @@ export class LoggingInterceptor implements NestInterceptor {
     ) {
       return call$;
     }
+
+    const graphqlContext = GqlExecutionContext.create(context);
+
+    // const request = graphqlContext.switchToHttp().getRequest();
+    if (graphqlContext.getType() === 'graphql') {
+      return next.handle();
+    }
+
+    //
+
     const request = context.switchToHttp().getRequest();
     const content = request.method + ' -> ' + request.url;
     console.log('+++ 收到请求：', content);

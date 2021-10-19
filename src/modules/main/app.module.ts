@@ -4,6 +4,7 @@ import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpExceptionFilter } from 'filters';
+import { GraphQLModule } from '@nestjs/graphql';
 import { AuthModule } from './../auth';
 import { CommonModule } from './../common';
 import { SnapshotModule } from './../snapshot';
@@ -25,6 +26,8 @@ import {
   LoggingInterceptor,
   TransformInterceptor,
 } from '../../interceptors';
+import { AppResolver } from './app.resolver';
+import { App } from './app.entity';
 
 @Module({
   imports: [
@@ -61,6 +64,13 @@ import {
       },
     }),
     ScheduleModule.forRoot(),
+    GraphQLModule.forRoot({
+      debug: true,
+      playground: true,
+      autoSchemaFile: './src/graphql/schema.gql',
+      useGlobalPrefix: true,
+    }),
+    TypeOrmModule.forFeature([App]),
     ConfigModule,
     AuthModule,
     CommonModule,
@@ -95,6 +105,7 @@ import {
       useClass: HttpExceptionFilter,
     },
     AppService,
+    AppResolver,
   ],
 })
 export class AppModule {}

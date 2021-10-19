@@ -22,6 +22,10 @@ export class AddressController {
   @Get()
   async paginate(@QueryParams(['address']) { options, querys }) {
     this.loggerService.info('paginate:querys:%O', querys);
+    // address toLowerCase
+    if (querys.address) {
+      querys.address = querys.address.toLowerCase();
+    }
     return this.addressService.paginate(options, querys);
   }
 

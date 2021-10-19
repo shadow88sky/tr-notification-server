@@ -67,12 +67,6 @@ export class TelegramCoreModule {
   private static createAsyncOptionsProvider(
     options: TelegramAsyncOptions,
   ): Provider {
-    console.log('11', {
-      name: TELEGRAM_OPTIONS,
-      provide: TELEGRAM_OPTIONS,
-      useFactory: options.useFactory,
-      inject: options.inject || [],
-    });
 
     if (options.useFactory) {
       return {

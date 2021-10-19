@@ -6,6 +6,7 @@
 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { GqlExecutionContext } from '@nestjs/graphql';
 import {
   Injectable,
   NestInterceptor,
@@ -26,6 +27,13 @@ export class TransformInterceptor<T>
     _context: ExecutionContext,
     next: CallHandler,
   ): Observable<THttpSuccessResponse<T>> {
+    const graphqlContext = GqlExecutionContext.create(_context);
+
+    // const request = graphqlContext.switchToHttp().getRequest();
+    if (graphqlContext.getType() === 'graphql') {
+      return next.handle();
+    }
+
     return next.handle().pipe(
       map((data) => ({
         statusCode: '200',

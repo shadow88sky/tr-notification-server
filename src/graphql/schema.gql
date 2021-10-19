@@ -1,0 +1,14 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""application"""
+type App {
+  id: ID!
+  name: String!
+}
+
+type Query {
+  app: App!
+  apps: [App!]!
+}
