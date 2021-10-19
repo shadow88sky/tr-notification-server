@@ -151,12 +151,14 @@ export class BalanceService {
    * @returns
    */
   async paginate(
-    options: IPaginationOptions,
+    pagination: IPaginationOptions,
+    querys,
   ): Promise<Pagination<Balance>> {
-    return paginate<Balance>(this.balanceRepository, options, {
+    return paginate<Balance>(this.balanceRepository, pagination, {
       order: {
         created_at: 'DESC',
       },
+      where: querys,
     });
   }
 }

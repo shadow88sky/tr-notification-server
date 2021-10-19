@@ -4,7 +4,7 @@ import Web3 from 'web3';
 import fs from 'fs';
 import { CreateAddressPayload } from './address.payload';
 import { AddressService } from './address.service';
-import { LoggerService } from '../common/';
+import { LoggerService, QueryParams } from '../common/';
 import { CustomError } from '../../errors/custom.error';
 
 @Controller('address')
@@ -20,9 +20,9 @@ export class AddressController {
    * @returns
    */
   @Get()
-  async paginate() {
-    this.loggerService.info('paginate');
-    return this.addressService.paginate({ page: 1, limit: 10 });
+  async paginate(@QueryParams(['address']) { options, querys }) {
+    this.loggerService.info('paginate:querys:%O', querys);
+    return this.addressService.paginate(options, querys);
   }
 
   /**

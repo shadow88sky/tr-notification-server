@@ -40,12 +40,14 @@ export class NotificationService {
    * @returns
    */
   async paginate(
-    options: IPaginationOptions,
+    pagination: IPaginationOptions,
+    querys,
   ): Promise<Pagination<Notification>> {
-    return paginate<Notification>(this.notificationRepository, options, {
+    return paginate<Notification>(this.notificationRepository, pagination, {
       order: {
         created_at: 'DESC',
       },
+      where: querys,
     });
   }
 }

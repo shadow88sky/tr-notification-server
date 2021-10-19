@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { NotificationService } from './notification.service';
-import { LoggerService } from '../common/';
+import { LoggerService, QueryParams } from '../common/';
 import { CreateNotificationPayload } from './notification.payload';
 
 @Controller('notification')
@@ -15,12 +15,11 @@ export class NotificationController {
    * paginate
    * @returns
    */
-  @Get()
-  async paginate() {
-    this.loggerService.info('paginate');
-    return this.notificationService.paginate({ page: 1, limit: 10 });
-  }
-
+   @Get()
+   async paginate(@QueryParams([]) { options, querys }) {
+     this.loggerService.info('paginate:querys:%O', querys);
+     return this.notificationService.paginate(options, querys);
+   }
   /**
    * create
    * @param payload

@@ -17,14 +17,20 @@ export class TreasuryService {
 
   /**
    * paginate
-   * @param options
+   * 
+   * @param pagination
+   * @param querys
    * @returns
    */
-  async paginate(options: IPaginationOptions): Promise<Pagination<Treasury>> {
-    return paginate<Treasury>(this.treasuryRepository, options, {
+  async paginate(
+    pagination: IPaginationOptions,
+    querys,
+  ): Promise<Pagination<Treasury>> {
+    return paginate<Treasury>(this.treasuryRepository, pagination, {
       order: {
         created_at: 'DESC',
       },
+      where: querys,
     });
   }
 

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { TreasuryService } from './treasury.service';
-import { LoggerService } from '../common';
+import { LoggerService, QueryParams } from '../common';
 import { CreateTreasuryPayload } from './treasury.payload';
 
 @Controller('treasury')
@@ -37,8 +37,8 @@ export class TreasuryController {
    * @returns
    */
   @Get()
-  async paginate() {
-    this.loggerService.info('paginate');
-    return this.treasuryRepository.paginate({ page: 1, limit: 10 });
+  async paginate(@QueryParams(["name"]) { options, querys }) {
+    this.loggerService.info('paginate:querys:%O', querys);
+    return this.treasuryRepository.paginate(options,querys);
   }
 }
