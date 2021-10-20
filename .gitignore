@@ -32,3 +32,4 @@ src/modules/script/csv/initAddress.csv
 .env-docker
 data
 .env-local
+postgresql

@@ -2,7 +2,6 @@ import {
     Entity,
     Column,
     PrimaryGeneratedColumn,
-    Unique,
     CreateDateColumn,
     UpdateDateColumn,
   } from 'typeorm';
@@ -11,7 +10,6 @@ import {
   @Entity({
     name: 'applications',
   })
-  @Unique('name', ['name'])
   @ObjectType({ description: 'application' })
   export class App {
     @PrimaryGeneratedColumn('uuid')
