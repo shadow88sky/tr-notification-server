@@ -37,7 +37,6 @@ function recFindByExt(
 
   files.forEach((file) => {
     const newbase = path.join(base, file);
-    console.log('newbase', newbase);
     if (/\.strategy.(ts|js)$/.test(newbase))
       if (result) {
         result.push(newbase);

@@ -1,3 +1,12 @@
+import path from 'path';
+import heapdump from 'heapdump';
+
+function showMemory() {
+  heapdump.writeSnapshot(
+    path.join(__dirname, '../heapdump/') + Date.now() + '.heapsnapshot',
+  );
+}
+
 import { NestFactory } from '@nestjs/core';
 import { useContainer } from 'class-validator';
 import { ValidationPipe } from './pipes/validation.pipe';
@@ -13,5 +22,9 @@ async function bootstrap() {
   app.useGlobalPipes(new TrimStringsPipe(), new ValidationPipe());
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   await app.listen(3000);
+
+  // debug
+  showMemory();
+  setInterval(showMemory, 1000 * 60 * 60); //每小时输出一次
 }
 bootstrap();

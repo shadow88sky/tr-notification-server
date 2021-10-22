@@ -33,3 +33,5 @@ src/modules/script/csv/initAddress.csv
 data
 .env-local
 postgresql
+.clinic
+heapdump
