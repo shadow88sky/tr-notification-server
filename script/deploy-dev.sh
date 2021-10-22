@@ -24,6 +24,6 @@ fi
 cd $PROJECTDIR
 echo PROJECTDIR
 sudo git pull origin dev -f
-sudo docker rmi $(sudo docker images --filter "dangling=true" -q --no-trunc)
+sudo docker image prune
 sudo docker-compose build --no-cache app
 sudo docker-compose up -d

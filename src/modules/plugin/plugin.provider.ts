@@ -23,12 +23,12 @@ function loadPlugin(pluginPath: string): Provider {
 }
 
 function searchPluginsInFolder(folder: string): string[] {
-  return recFindByExt(folder, process.env.fileExt || 'ts');
+  // return recFindByExt(folder, process.env.fileExt || 'ts');
+  return recFindByExt(folder);
 }
 
 function recFindByExt(
   base: string,
-  ext: string,
   files?: string[],
   result?: string[],
 ): any[] {
@@ -37,11 +37,11 @@ function recFindByExt(
 
   files.forEach((file) => {
     const newbase = path.join(base, file);
-    if (file.substr(-1 * (ext.length + 1)) === '.' + ext) {
+    console.log('newbase', newbase);
+    if (/\.strategy.(ts|js)$/.test(newbase))
       if (result) {
         result.push(newbase);
       }
-    }
   });
   return result;
 }
