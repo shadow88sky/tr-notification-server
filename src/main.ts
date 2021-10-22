@@ -1,11 +1,11 @@
-import path from 'path';
-import heapdump from 'heapdump';
+// import path from 'path';
+// import heapdump from 'heapdump';
 
-function showMemory() {
-  heapdump.writeSnapshot(
-    path.join(__dirname, '../heapdump/') + Date.now() + '.heapsnapshot',
-  );
-}
+// function showMemory() {
+//   heapdump.writeSnapshot(
+//     path.join(__dirname, '../heapdump/') + Date.now() + '.heapsnapshot',
+//   );
+// }
 
 import { NestFactory } from '@nestjs/core';
 import { useContainer } from 'class-validator';
@@ -23,8 +23,8 @@ async function bootstrap() {
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   await app.listen(3000);
 
-  // debug
-  showMemory();
-  setInterval(showMemory, 1000 * 60 * 60); //每小时输出一次
+  //  debug
+  // showMemory();
+  // setInterval(showMemory, 1000 * 60 * 60); //每小时输出一次
 }
 bootstrap();
