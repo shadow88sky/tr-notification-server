@@ -13,7 +13,7 @@ import { ChainEnum, MAX_SYNC_DAY } from '../../constants';
 import { ConfigService } from '../config';
 import { LoggerService } from '../common/';
 
-const queue = new PQueue({ concurrency: 5 });
+// const queue = new PQueue({ concurrency: 5 });
 /*
 
 * * * * * *
@@ -31,6 +31,7 @@ export class SyncService implements OnModuleInit {
   private readonly defaultRedisClient: Redis;
   private redisKey = 'tr:balance-top2:list';
 
+  private readonly queue: PQueue;
   constructor(
     private readonly balanceService: BalanceService,
     private readonly addressService: AddressService,
@@ -40,10 +41,10 @@ export class SyncService implements OnModuleInit {
     private readonly loggerService: LoggerService,
   ) {
     this.defaultRedisClient = this.redisService.getClient();
+    this.queue = new PQueue({ concurrency: 5 });
   }
 
   async onModuleInit() {
-    // this.syncAddressBalances();
     this.syncAddressBalancesFromDebank();
     this.syncBalanceToRedis();
   }
@@ -61,7 +62,7 @@ export class SyncService implements OnModuleInit {
 
     for (let index = 0; index < addressList.length; index++) {
       const item = addressList[index];
-      await queue.add(() => {
+      await this.queue.add(() => {
         this.handleAddressBalances(item);
       });
     }
@@ -87,7 +88,7 @@ export class SyncService implements OnModuleInit {
 
     for (let index = 0; index < addressList.length; index++) {
       const item = addressList[index];
-      queue.add(() => {
+      this.queue.add(() => {
         this.handleAddressBalancesFromDebank(item);
       });
     }
@@ -136,7 +137,7 @@ export class SyncService implements OnModuleInit {
         return;
       }
 
-      queue.add(() => {
+      this.queue.add(() => {
         this.handleAddressBalancesHistory(item.address, item.chain_id, days);
       });
     }
@@ -160,7 +161,7 @@ export class SyncService implements OnModuleInit {
       const item = addressList[index];
       const days = MAX_SYNC_DAY;
 
-      queue.add(() => {
+      this.queue.add(() => {
         this.handleAddressBalancesHistory(item.address, item.chain_id, days);
       });
     }
