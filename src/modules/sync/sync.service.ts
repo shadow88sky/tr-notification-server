@@ -41,7 +41,7 @@ export class SyncService implements OnModuleInit {
     private readonly loggerService: LoggerService,
   ) {
     this.defaultRedisClient = this.redisService.getClient();
-    this.queue = new PQueue({ concurrency: 5 });
+    this.queue = new PQueue({ concurrency: 10 });
   }
 
   async onModuleInit() {

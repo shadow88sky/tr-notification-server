@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { SyncService } from './sync.service';
+import { BitQueryService } from './bitquery/bitquery.service';
 import { BalanceModule } from './../balance';
 import { AddressModule } from './../address';
 import { HistoryModule } from './../history';
@@ -14,7 +15,7 @@ import { ConfigModule } from './../config';
     ConfigModule,
     TreasuryModule,
   ],
-  exports: [SyncService],
-  providers: [SyncService],
+  exports: [SyncService, BitQueryService],
+  providers: [SyncService, BitQueryService],
 })
 export class SyncModule {}
