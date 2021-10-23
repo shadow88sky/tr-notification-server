@@ -62,8 +62,8 @@ export class SyncService implements OnModuleInit {
 
     for (let index = 0; index < addressList.length; index++) {
       const item = addressList[index];
-      await this.queue.add(() => {
-        this.handleAddressBalances(item);
+      await this.queue.add(async () => {
+        await this.handleAddressBalances(item);
       });
     }
     // addressList.forEach((item) => {
@@ -88,8 +88,8 @@ export class SyncService implements OnModuleInit {
 
     for (let index = 0; index < addressList.length; index++) {
       const item = addressList[index];
-      this.queue.add(() => {
-        this.handleAddressBalancesFromDebank(item);
+      await this.queue.add(async () => {
+        await this.handleAddressBalancesFromDebank(item);
       });
     }
   }
