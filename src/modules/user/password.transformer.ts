@@ -1,5 +1,5 @@
 import { ValueTransformer } from 'typeorm';
-import { Hash } from '../../utils/Hash';
+import { Hash } from '../../utils/hash';
 
 export class PasswordTransformer implements ValueTransformer {
   to(value) {

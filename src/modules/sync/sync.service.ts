@@ -12,6 +12,7 @@ import { HistoryService } from '../history';
 import { ChainEnum, MAX_SYNC_DAY } from '../../constants';
 import { ConfigService } from '../config';
 import { LoggerService } from '../common/';
+import { sleep } from '../../utils/sleep';
 
 // const queue = new PQueue({ concurrency: 5 });
 /*
@@ -87,10 +88,14 @@ export class SyncService implements OnModuleInit {
     });
 
     for (let index = 0; index < addressList.length; index++) {
+      if (index === 5) await sleep(500);
+
       const item = addressList[index];
-      await this.queue.add(async () => {
-        await this.handleAddressBalancesFromDebank(item);
-      });
+
+      await this.handleAddressBalancesFromDebank(item);
+      // await this.queue.add(async () => {
+      //   await this.handleAddressBalancesFromDebank(item);
+      // });
     }
   }
 
