@@ -1,6 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import PQueue from 'p-queue';
 import { request, gql, GraphQLClient } from 'graphql-request';
 import moment from 'moment';
 import _ from 'lodash';
@@ -13,16 +12,13 @@ import { LoggerService } from '../../common';
 
 @Injectable()
 export class BitQueryService implements OnModuleInit {
-  private readonly queue: PQueue;
   constructor(
     private readonly balanceService: BalanceService,
     private readonly addressService: AddressService,
     private readonly historyService: HistoryService,
     private readonly configService: ConfigService,
     private readonly loggerService: LoggerService,
-  ) {
-    this.queue = new PQueue({ concurrency: 5 });
-  }
+  ) {}
   async onModuleInit() {
     // console.log('onModuleInit');
     // const result = await this.queryBalances({

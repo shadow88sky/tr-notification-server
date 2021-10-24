@@ -2,8 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import path from 'path';
 import Piscina from 'piscina';
-import { RedisService } from '@liaoliaots/nestjs-redis';
-import { Redis } from 'ioredis';
+import { RedisService } from 'nestjs-redis';
 import moment from 'moment';
 import handlebars from 'handlebars';
 import { NotificationService } from '../modules/notification';
@@ -13,7 +12,6 @@ import { tpl } from '../template/notification.tpl';
 
 @Injectable()
 class BalanceStrategy implements OnModuleInit {
-  private readonly defaultRedisClient: Redis;
   private redisKey = 'tr:balance-top2:list';
   private template;
   constructor(
@@ -22,12 +20,11 @@ class BalanceStrategy implements OnModuleInit {
     private readonly telegramService: TelegramService,
     private readonly configService: ConfigService,
   ) {
-    this.defaultRedisClient = this.redisService.getClient();
-
     this.template = handlebars.compile(tpl);
   }
   onModuleInit() {
     this.handle();
+
     // this.telegramService.sendMessage(
     //   Number(this.configService.get('TELEGRAM_CHAT_ID')),
     // this.template({
@@ -63,12 +60,13 @@ class BalanceStrategy implements OnModuleInit {
   /**
    *
    */
+
   @Cron('0 */8 * * * *')
   async handle() {
     const ratioLimit = 0.02;
-    const newest = await this.defaultRedisClient.lindex(this.redisKey, 0);
+    const newest = await this.redisService.getClient().lindex(this.redisKey, 0);
 
-    const before = await this.defaultRedisClient.lindex(this.redisKey, 1);
+    const before = await this.redisService.getClient().lindex(this.redisKey, 1);
 
     const piscina = new Piscina({
       // The URL must be a file:// URL

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
-import { RedisModule, RedisModuleOptions } from '@liaoliaots/nestjs-redis';
+import { RedisModule } from 'nestjs-redis';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpExceptionFilter } from 'filters';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -48,21 +48,25 @@ import { App } from './app.entity';
         } as TypeOrmModuleAsyncOptions;
       },
     }),
+    /*
     RedisModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        console.log('configService', configService);
+        // return {
+        //   url: 'redis://127.0.0.1:6379',
+        // };
+        // console.log('configService', configService);
         return {
-          closeClient: true,
-          config: {
-            host: configService.get('REDIS_HOST'),
-            port: +configService.get('REDIS_PORT'),
-            password: configService.get('REDIS_PASSWOR'),
-          },
-        } as RedisModuleOptions;
+          host: configService.get('REDIS_HOST'),
+          port: +configService.get('REDIS_PORT'),
+          password: configService.get('REDIS_PASSWOR'),
+        };
       },
     }),
+
+    */
+
     ScheduleModule.forRoot(),
     GraphQLModule.forRootAsync({
       imports: [ConfigModule],
@@ -79,6 +83,18 @@ import { App } from './app.entity';
       }),
       inject: [ConfigService],
     }),
+    RedisModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        return {
+          host: configService.get('REDIS_HOST'),
+          port: +configService.get('REDIS_PORT'),
+          password: configService.get('REDIS_PASSWOR'),
+        };
+      },
+    }),
+
     TypeOrmModule.forFeature([App]),
     ConfigModule,
     AuthModule,

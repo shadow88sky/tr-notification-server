@@ -1,11 +1,10 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import request from 'request-promise';
-import PQueue from 'p-queue';
+// import PQueue from 'p-queue';
 import moment from 'moment';
 import _ from 'lodash';
-import { RedisService } from '@liaoliaots/nestjs-redis';
-import { Redis } from 'ioredis';
+import { RedisService } from 'nestjs-redis';
 import { BalanceService } from '../balance';
 import { AddressService } from '../address';
 import { HistoryService } from '../history';
@@ -29,10 +28,9 @@ second (optional)
 */
 @Injectable()
 export class SyncService implements OnModuleInit {
-  private readonly defaultRedisClient: Redis;
   private redisKey = 'tr:balance-top2:list';
 
-  private readonly queue: PQueue;
+  // private readonly queue: PQueue;
   constructor(
     private readonly balanceService: BalanceService,
     private readonly addressService: AddressService,
@@ -41,8 +39,8 @@ export class SyncService implements OnModuleInit {
     private readonly redisService: RedisService,
     private readonly loggerService: LoggerService,
   ) {
-    this.defaultRedisClient = this.redisService.getClient();
-    this.queue = new PQueue({ concurrency: 10 });
+    // this.defaultRedisClient = this.redisService.getClient();
+    // this.queue = new PQueue({ concurrency: 10 });
   }
 
   async onModuleInit() {
@@ -63,9 +61,9 @@ export class SyncService implements OnModuleInit {
 
     for (let index = 0; index < addressList.length; index++) {
       const item = addressList[index];
-      await this.queue.add(async () => {
-        await this.handleAddressBalances(item);
-      });
+      // await this.queue.add(async () => {
+      //   await this.handleAddressBalances(item);
+      // });
     }
     // addressList.forEach((item) => {
     //  await queue.add(() => {
@@ -88,7 +86,7 @@ export class SyncService implements OnModuleInit {
     });
 
     for (let index = 0; index < addressList.length; index++) {
-      if (index === 5) await sleep(500);
+      if (index % 5 === 1) await sleep(500);
 
       const item = addressList[index];
 
@@ -142,9 +140,9 @@ export class SyncService implements OnModuleInit {
         return;
       }
 
-      this.queue.add(() => {
-        this.handleAddressBalancesHistory(item.address, item.chain_id, days);
-      });
+      // this.queue.add(() => {
+      //   this.handleAddressBalancesHistory(item.address, item.chain_id, days);
+      // });
     }
     //
   }
@@ -166,9 +164,9 @@ export class SyncService implements OnModuleInit {
       const item = addressList[index];
       const days = MAX_SYNC_DAY;
 
-      this.queue.add(() => {
-        this.handleAddressBalancesHistory(item.address, item.chain_id, days);
-      });
+      // this.queue.add(() => {
+      //   this.handleAddressBalancesHistory(item.address, item.chain_id, days);
+      // });
     }
     //
   }
@@ -259,12 +257,11 @@ export class SyncService implements OnModuleInit {
       );
     }
 
-    await this.defaultRedisClient.lpush(
-      this.redisKey,
-      JSON.stringify(balanceObj),
-    );
-    await this.defaultRedisClient.ltrim(this.redisKey, 0, 1);
-    await this.defaultRedisClient.expire(this.redisKey, 60 * 20); // 20 minutes
+    await this.redisService
+      .getClient()
+      .lpush(this.redisKey, JSON.stringify(balanceObj));
+    await this.redisService.getClient().ltrim(this.redisKey, 0, 1);
+    await this.redisService.getClient().expire(this.redisKey, 60 * 20); // 20 minutes
   }
 
   /**

@@ -23,6 +23,7 @@ fi
 
 cd $PROJECTDIR
 echo PROJECTDIR
+sudo git checkout .
 sudo git pull origin dev -f
 yes y | sudo docker image prune
 sudo docker-compose build --no-cache app
