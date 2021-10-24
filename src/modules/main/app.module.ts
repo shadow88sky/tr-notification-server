@@ -5,6 +5,7 @@ import { RedisModule } from 'nestjs-redis';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpExceptionFilter } from 'filters';
 import { GraphQLModule } from '@nestjs/graphql';
+import { BullModule } from '@nestjs/bull';
 import { AuthModule } from './../auth';
 import { CommonModule } from './../common';
 import { SnapshotModule } from './../snapshot';
@@ -48,25 +49,6 @@ import { App } from './app.entity';
         } as TypeOrmModuleAsyncOptions;
       },
     }),
-    /*
-    RedisModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        // return {
-        //   url: 'redis://127.0.0.1:6379',
-        // };
-        // console.log('configService', configService);
-        return {
-          host: configService.get('REDIS_HOST'),
-          port: +configService.get('REDIS_PORT'),
-          password: configService.get('REDIS_PASSWOR'),
-        };
-      },
-    }),
-
-    */
-
     ScheduleModule.forRoot(),
     GraphQLModule.forRootAsync({
       imports: [ConfigModule],
@@ -94,7 +76,19 @@ import { App } from './app.entity';
         };
       },
     }),
-
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        return {
+          redis: {
+            host: configService.get('REDIS_HOST'),
+            port: +configService.get('REDIS_PORT'),
+            password: configService.get('REDIS_PASSWOR'),
+          },
+        };
+      },
+    }),
     TypeOrmModule.forFeature([App]),
     ConfigModule,
     AuthModule,

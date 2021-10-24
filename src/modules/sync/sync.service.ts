@@ -1,7 +1,8 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import request from 'request-promise';
-// import PQueue from 'p-queue';
+import { Queue } from 'bull';
+import { InjectQueue } from '@nestjs/bull';
 import moment from 'moment';
 import _ from 'lodash';
 import { RedisService } from 'nestjs-redis';
@@ -11,9 +12,7 @@ import { HistoryService } from '../history';
 import { ChainEnum, MAX_SYNC_DAY } from '../../constants';
 import { ConfigService } from '../config';
 import { LoggerService } from '../common/';
-import { sleep } from '../../utils/sleep';
 
-// const queue = new PQueue({ concurrency: 5 });
 /*
 
 * * * * * *
@@ -38,40 +37,13 @@ export class SyncService implements OnModuleInit {
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
     private readonly loggerService: LoggerService,
-  ) {
-    // this.defaultRedisClient = this.redisService.getClient();
-    // this.queue = new PQueue({ concurrency: 10 });
-  }
+
+    @InjectQueue('sync') private syncQueue: Queue,
+  ) {}
 
   async onModuleInit() {
     this.syncAddressBalancesFromDebank();
     this.syncBalanceToRedis();
-  }
-
-  /**
-   * asynAddressBalances
-   * 每隔10分钟执行一次
-   */
-  // @Cron('0 */10 * * * *')
-  async syncAddressBalances() {
-    //
-    const addressList = await this.addressService.find({
-      relations: ['treasury'],
-    });
-
-    for (let index = 0; index < addressList.length; index++) {
-      const item = addressList[index];
-      // await this.queue.add(async () => {
-      //   await this.handleAddressBalances(item);
-      // });
-    }
-    // addressList.forEach((item) => {
-    //  await queue.add(() => {
-    //     this.handleAddressBalances(item);
-    //   });
-    // });
-
-    //
   }
 
   /**
@@ -86,14 +58,8 @@ export class SyncService implements OnModuleInit {
     });
 
     for (let index = 0; index < addressList.length; index++) {
-      if (index % 5 === 1) await sleep(500);
-
       const item = addressList[index];
-
-      await this.handleAddressBalancesFromDebank(item);
-      // await this.queue.add(async () => {
-      //   await this.handleAddressBalancesFromDebank(item);
-      // });
+      await this.syncQueue.add('debank', item);
     }
   }
 
@@ -286,30 +252,6 @@ export class SyncService implements OnModuleInit {
 
       if (response.data) {
         await this.balanceService.handleMany(response.data, address);
-      }
-    } catch (error) {
-      this.loggerService.error(error);
-    }
-  }
-
-  /**
-   * debank api
-   * @param address
-   */
-  async handleAddressBalancesFromDebank(address) {
-    try {
-      const options = {
-        method: 'GET',
-        url: `https://openapi.debank.com/v1/user/token_list?id=${address.address}&chain_id=${address.chain_id}&is_all=true&has_balance=true`,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        json: true,
-      };
-      const response = await request(options);
-      //
-      if (response) {
-        await this.balanceService.handleManyFromDebank(response, address);
       }
     } catch (error) {
       this.loggerService.error(error);

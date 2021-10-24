@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^1.6.0",
+    "@nestjs/bull": "0.4.2",
     "@nestjs/common": "^8.0.6",
     "@nestjs/core": "^8.0.6",
     "@nestjs/graphql": "^9.0.6",
@@ -35,8 +36,10 @@
     "@nestjs/schematics": "^8.0.3",
     "@nestjs/swagger": "^5.0.9",
     "@nestjs/typeorm": "^8.0.2",
+    "@types/bull": "3.15.5",
     "apollo-server-express": "^3.4.0",
     "bcrypt": "^5.0.1",
+    "bull": "3.29.3",
     "caller-module": "^1.0.4",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
