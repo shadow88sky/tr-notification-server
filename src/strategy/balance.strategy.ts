@@ -14,12 +14,18 @@ import { tpl } from '../template/notification.tpl';
 class BalanceStrategy implements OnModuleInit {
   private redisKey = 'tr:balance-top2:list';
   private template;
+  private piscina: Piscina;
   constructor(
     private readonly notificationService: NotificationService,
     private readonly redisService: RedisService,
     private readonly telegramService: TelegramService,
     private readonly configService: ConfigService,
   ) {
+    this.piscina = new Piscina({
+      // The URL must be a file:// URL
+      filename: path.resolve(__dirname, './work/balance.work.js'),
+    });
+
     this.template = handlebars.compile(tpl);
   }
   onModuleInit() {
@@ -68,13 +74,8 @@ class BalanceStrategy implements OnModuleInit {
 
     const before = await this.redisService.getClient().lindex(this.redisKey, 1);
 
-    const piscina = new Piscina({
-      // The URL must be a file:// URL
-      filename: path.resolve(__dirname, './work/balance.work.js'),
-    });
-
     if (newest && before) {
-      const result = await piscina.run({
+      const result = await this.piscina.run({
         newest: JSON.parse(newest),
         before: JSON.parse(before),
         ratioLimit,
