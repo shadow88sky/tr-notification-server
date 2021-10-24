@@ -54,11 +54,13 @@ export class ScriptService {
             });
           }
 
-          await self.addressService.create({
-            address: element.address,
-            chain_id: element.chain,
-            treasury: treasury.id,
-          });
+          try {
+            await self.addressService.create({
+              address: element.address,
+              chain_id: element.chain,
+              treasury: treasury.id,
+            });
+          } catch (error) {}
         }
       } catch (error) {
         console.log('initAddress:error', error);

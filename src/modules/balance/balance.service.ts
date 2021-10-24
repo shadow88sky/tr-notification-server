@@ -9,6 +9,7 @@ import {
   paginate,
 } from 'nestjs-typeorm-paginate';
 import { Balance } from './balance.entity';
+import { add } from 'winston';
 
 @Injectable()
 export class BalanceService {
@@ -105,6 +106,45 @@ export class BalanceService {
         balance.supports_erc = [];
         balance.nft_token_id = '';
         arr.push(balance);
+      });
+
+      return await this.balanceRepository.save(arr);
+    } catch (error) {
+      if (error.code === '23505') {
+        return;
+        // ignore duplicate key value violates unique constraint "address_contract_updated"
+      }
+
+      throw error;
+      //
+    }
+  }
+
+  async handleManyFromBitQuery(payload, { chain_id, treasury_id }) {
+    try {
+      const arr = [];
+      payload.ethereum.address.forEach((address) => {
+        address.balances.forEach((item) => {
+          let balance = new Balance();
+          balance.address = address.address;
+          balance.balance = item.value;
+          balance.balanceExact = new Decimal(item.value)
+            .mul(10 ** item.currency.decimals)
+            .toString();
+          balance.balance_usd = '0';
+          balance.type = '';
+          balance.treasury = treasury_id;
+          balance.quote_currency = '';
+          balance.chain_id = chain_id;
+          balance.contract_decimals = item.currency.decimals;
+          balance.contract_ticker_symbol = item.currency.symbol;
+          balance.contract_name = item.currency.name;
+          balance.contract_address = item.currency.address;
+          balance.quote_rate = 0;
+          balance.supports_erc = [];
+          balance.nft_token_id = '';
+          arr.push(balance);
+        });
       });
 
       return await this.balanceRepository.save(arr);

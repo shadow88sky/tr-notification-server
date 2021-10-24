@@ -8,10 +8,12 @@ import _ from 'lodash';
 import { RedisService } from 'nestjs-redis';
 import { BalanceService } from '../balance';
 import { AddressService } from '../address';
+import { TreasuryService } from '../treasury';
 import { HistoryService } from '../history';
-import { ChainEnum, MAX_SYNC_DAY } from '../../constants';
+import { BitQueryChain, ChainEnum, MAX_SYNC_DAY } from '../../constants';
 import { ConfigService } from '../config';
 import { LoggerService } from '../common/';
+import { group } from '../../utils/array';
 
 /*
 
@@ -31,23 +33,25 @@ export class SyncService implements OnModuleInit {
 
   // private readonly queue: PQueue;
   constructor(
+    @InjectQueue('sync') private syncQueue: Queue,
     private readonly balanceService: BalanceService,
     private readonly addressService: AddressService,
     private readonly historyService: HistoryService,
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
     private readonly loggerService: LoggerService,
-
-    @InjectQueue('sync') private syncQueue: Queue,
+    private readonly treasuryService: TreasuryService,
   ) {}
 
   async onModuleInit() {
     this.syncAddressBalancesFromDebank();
+    this.syncAddressBalancesFromBitQuery();
+
     this.syncBalanceToRedis();
   }
 
   /**
-   * asynAddressBalances
+   * syncAddressBalancesFromDebank
    * 每隔10分钟执行一次
    */
   @Cron('0 */10 * * * *')
@@ -60,6 +64,53 @@ export class SyncService implements OnModuleInit {
     for (let index = 0; index < addressList.length; index++) {
       const item = addressList[index];
       await this.syncQueue.add('debank', item);
+    }
+  }
+
+  /**
+   * syncAddressBalancesFromBitQuery
+   * 每隔15分钟执行一次
+   */
+  async syncAddressBalancesFromBitQuery() {
+    const treasuries = await this.treasuryService.find({});
+    for (let j = 0; j < treasuries.length; j++) {
+      const treasury = treasuries[j];
+
+      for (const chain in ChainEnum) {
+        if (!isNaN(Number(chain))) {
+          continue;
+        }
+        const addressList = await this.addressService.find({
+          where: {
+            chain_id: chain,
+            treasury: treasury.id,
+          },
+          // relations: ['treasury'],
+        });
+        if (!addressList.length) continue;
+
+        const groupedArray = group(addressList, 5);
+        for (let index = 0; index < groupedArray.length; index++) {
+          const arr = groupedArray[index].reduce((total, currentValue) => {
+            total.push(`${currentValue.address}`);
+            return total;
+          }, []);
+          if (BitQueryChain[chain]) {
+            await this.syncQueue.add('bitquery', {
+              network: BitQueryChain[chain],
+              address: arr,
+              chain_id: chain,
+              treasury_id: treasury.id,
+            });
+            // console.log('bitquery', {
+            //   network: BitQueryChain[chain],
+            //   address: arr,
+            //   chain_id: chain,
+            //   treasury_id: treasury.id,
+            // });
+          }
+        }
+      }
     }
   }
 
@@ -118,6 +169,7 @@ export class SyncService implements OnModuleInit {
    * 每天0点执行一次
    */
   // @Cron('0 0 0 * * *')
+  /*
   async syncBeforeAddressBalancesHistory() {
     //
     const addressList = await this.addressService.find({
@@ -130,12 +182,11 @@ export class SyncService implements OnModuleInit {
       const item = addressList[index];
       const days = MAX_SYNC_DAY;
 
-      // this.queue.add(() => {
-      //   this.handleAddressBalancesHistory(item.address, item.chain_id, days);
-      // });
+   
     }
     //
   }
+  */
 
   /**
    * syncBalanceToRedis
