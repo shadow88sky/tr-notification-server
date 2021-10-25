@@ -42,3 +42,8 @@ export const BitQueryChain = {
   polygon: 'matic',
   matic: 'matic',
 };
+
+export const EthereumContractAddress =
+  '0x0000000000000000000000000000000000000000';
+
+  

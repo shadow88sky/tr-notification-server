@@ -44,8 +44,8 @@ export class SyncService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    this.syncAddressBalancesFromDebank();
-    // this.syncAddressBalancesFromBitQuery();
+    // this.syncAddressBalancesFromDebank();
+    this.syncAddressBalancesFromBitQuery();
 
     this.syncBalanceToRedis();
   }
@@ -54,66 +54,66 @@ export class SyncService implements OnModuleInit {
    * syncAddressBalancesFromDebank
    * 每隔10分钟执行一次
    */
-  @Cron('0 */10 * * * *')
-  async syncAddressBalancesFromDebank() {
-    //
-    const addressList = await this.addressService.find({
-      relations: ['treasury'],
-    });
+  // @Cron('0 */10 * * * *')
+  // async syncAddressBalancesFromDebank() {
+  //   //
+  //   const addressList = await this.addressService.find({
+  //     relations: ['treasury'],
+  //   });
 
-    for (let index = 0; index < addressList.length; index++) {
-      const item = addressList[index];
-      await this.syncQueue.add('debank', item);
-    }
-  }
+  //   for (let index = 0; index < addressList.length; index++) {
+  //     const item = addressList[index];
+  //     await this.syncQueue.add('debank', item);
+  //   }
+  // }
 
   /**
    * syncAddressBalancesFromBitQuery
-   * 每隔15分钟执行一次
+   * 每隔10分钟执行一次
    */
-  // @Cron('0 */15 * * * *')
-  // async syncAddressBalancesFromBitQuery() {
-  //   const treasuries = await this.treasuryService.find({});
-  //   for (let j = 0; j < treasuries.length; j++) {
-  //     const treasury = treasuries[j];
+  @Cron('0 */10 * * * *')
+  async syncAddressBalancesFromBitQuery() {
+    const treasuries = await this.treasuryService.find({});
+    for (let j = 0; j < treasuries.length; j++) {
+      const treasury = treasuries[j];
 
-  //     for (const chain in ChainEnum) {
-  //       if (!isNaN(Number(chain))) {
-  //         continue;
-  //       }
-  //       const addressList = await this.addressService.find({
-  //         where: {
-  //           chain_id: chain,
-  //           treasury: treasury.id,
-  //         },
-  //         // relations: ['treasury'],
-  //       });
-  //       if (!addressList.length) continue;
+      for (const chain in ChainEnum) {
+        if (!isNaN(Number(chain))) {
+          continue;
+        }
+        const addressList = await this.addressService.find({
+          where: {
+            chain_id: chain,
+            treasury: treasury.id,
+          },
+          // relations: ['treasury'],
+        });
+        if (!addressList.length) continue;
 
-  //       const groupedArray = group(addressList, 5);
-  //       for (let index = 0; index < groupedArray.length; index++) {
-  //         const arr = groupedArray[index].reduce((total, currentValue) => {
-  //           total.push(`${currentValue.address}`);
-  //           return total;
-  //         }, []);
-  //         if (BitQueryChain[chain]) {
-  //           await this.syncQueue.add('bitquery', {
-  //             network: BitQueryChain[chain],
-  //             address: arr,
-  //             chain_id: chain,
-  //             treasury_id: treasury.id,
-  //           });
-  //           // console.log('bitquery', {
-  //           //   network: BitQueryChain[chain],
-  //           //   address: arr,
-  //           //   chain_id: chain,
-  //           //   treasury_id: treasury.id,
-  //           // });
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
+        const groupedArray = group(addressList, 5);
+        for (let index = 0; index < groupedArray.length; index++) {
+          const arr = groupedArray[index].reduce((total, currentValue) => {
+            total.push(`${currentValue.address}`);
+            return total;
+          }, []);
+          if (BitQueryChain[chain]) {
+            await this.syncQueue.add('bitquery', {
+              network: BitQueryChain[chain],
+              address: arr,
+              chain_id: chain,
+              treasury_id: treasury.id,
+            });
+            // console.log('bitquery', {
+            //   network: BitQueryChain[chain],
+            //   address: arr,
+            //   chain_id: chain,
+            //   treasury_id: treasury.id,
+            // });
+          }
+        }
+      }
+    }
+  }
 
   /**
    * asynAddressBalancesHistory

@@ -6,12 +6,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  BeforeInsert,
 } from 'typeorm';
 
 @Entity({
   name: 'notifications',
 })
-@Unique('content', ['content'])
+@Unique('hash', ['hash'])
 export class Notification {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -30,6 +31,9 @@ export class Notification {
     },
   ];
 
+  @Column({ type: 'varchar', nullable: true })
+  hash: string;
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
@@ -42,4 +46,9 @@ export class Notification {
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   updated_at: Date;
+
+  @BeforeInsert()
+  handleBeforeInsert() {
+    console.log('handleBeforeInsert');
+  }
 }

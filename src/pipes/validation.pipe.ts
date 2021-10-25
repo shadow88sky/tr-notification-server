@@ -21,10 +21,9 @@ export class ValidationPipe implements PipeTransform<any> {
     }
     const object = plainToClass(metatype, value);
     const errors = await validate(object);
+    console.log('errors', JSON.stringify(errors));
     if (errors.length > 0) {
-      const errorMessage = errors
-        .map((error) => Object.values(error.constraints).join(';'))
-        .join(';');
+      const errorMessage = this.handleError(errors);
       throw new ValidationError(errorMessage);
     }
     return value;
@@ -33,5 +32,19 @@ export class ValidationPipe implements PipeTransform<any> {
   private toValidate(metatype): boolean {
     const types = [String, Boolean, Number, Array, Object];
     return !types.find((type) => metatype === type);
+  }
+
+  private handleError(errors) {
+    const errorMessage = errors.reduce((total, currency) => {
+      if (currency.children.length) {
+        total += this.handleError(currency.children);
+      } else {
+        total += Object.values(currency.constraints).join(';');
+      }
+
+      return total;
+    }, '');
+
+    return errorMessage;
   }
 }

@@ -27,6 +27,7 @@ export class NotificationController {
    */
   @Post()
   async create(@Body() payload: CreateNotificationPayload) {
+    console.log('payload',payload);
     const result = await this.notificationService.create(payload);
     return result;
   }

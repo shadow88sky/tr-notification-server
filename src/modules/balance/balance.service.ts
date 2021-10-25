@@ -9,7 +9,10 @@ import {
   paginate,
 } from 'nestjs-typeorm-paginate';
 import { Balance } from './balance.entity';
-import { BalanceFromType } from '../../constants/chain.constant';
+import {
+  BalanceFromType,
+  EthereumContractAddress,
+} from '../../constants/chain.constant';
 
 @Injectable()
 export class BalanceService {
@@ -100,7 +103,8 @@ export class BalanceService {
         balance.contract_decimals = item.decimals;
         balance.contract_ticker_symbol = item.symbol;
         balance.contract_name = item.name;
-        balance.contract_address = item.id;
+        balance.contract_address =
+          item.id === 'eth' ? EthereumContractAddress : item.id;
         balance.quote_rate = item.price || '0';
         balance.updated_at = payload.updated_at;
         balance.supports_erc = [];
@@ -140,7 +144,11 @@ export class BalanceService {
           balance.contract_decimals = item.currency.decimals;
           balance.contract_ticker_symbol = item.currency.symbol;
           balance.contract_name = item.currency.name;
-          balance.contract_address = item.currency.address;
+          balance.contract_address =
+            item.currency.address === '-'
+              ? EthereumContractAddress
+              : item.currency.address;
+
           balance.quote_rate = 0;
           balance.supports_erc = [];
           balance.nft_token_id = '';

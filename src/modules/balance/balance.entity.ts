@@ -15,12 +15,6 @@ import { lowercase } from '../../transformers';
 @Entity({
   name: 'balances',
 })
-@Unique('address_chain_id_contract_updated', [
-  'address',
-  'chain_id',
-  'updated_at',
-  'contract_address',
-])
 export class Balance {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -60,7 +54,12 @@ export class Balance {
   @Column({ type: 'varchar', nullable: true })
   contract_ticker_symbol: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({
+    type: 'varchar',
+    nullable: true,
+    default: '0',
+    transformer: [lowercase],
+  })
   contract_address: string;
 
   @Column({ type: 'varchar', nullable: true })
