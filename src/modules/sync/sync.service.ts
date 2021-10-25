@@ -44,8 +44,8 @@ export class SyncService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    // this.syncAddressBalancesFromDebank();
-    this.syncAddressBalancesFromBitQuery();
+    this.syncAddressBalancesFromDebank();
+    // this.syncAddressBalancesFromBitQuery();
 
     this.syncBalanceToRedis();
   }
@@ -54,24 +54,25 @@ export class SyncService implements OnModuleInit {
    * syncAddressBalancesFromDebank
    * 每隔10分钟执行一次
    */
-  // @Cron('0 */10 * * * *')
-  // async syncAddressBalancesFromDebank() {
-  //   //
-  //   const addressList = await this.addressService.find({
-  //     relations: ['treasury'],
-  //   });
+  @Cron('0 */10 * * * *')
+  async syncAddressBalancesFromDebank() {
+    //
+    const addressList = await this.addressService.find({
+      relations: ['treasury'],
+    });
 
-  //   for (let index = 0; index < addressList.length; index++) {
-  //     const item = addressList[index];
-  //     await this.syncQueue.add('debank', item);
-  //   }
-  // }
+    for (let index = 0; index < addressList.length; index++) {
+      const item = addressList[index];
+      await this.syncQueue.add('debank', item);
+    }
+  }
 
   /**
    * syncAddressBalancesFromBitQuery
    * 每隔10分钟执行一次
    */
-  @Cron('0 */10 * * * *')
+  //// @Cron('0 */10 * * * *')
+  /*
   async syncAddressBalancesFromBitQuery() {
     const treasuries = await this.treasuryService.find({});
     for (let j = 0; j < treasuries.length; j++) {
@@ -114,6 +115,7 @@ export class SyncService implements OnModuleInit {
       }
     }
   }
+  */
 
   /**
    * asynAddressBalancesHistory
