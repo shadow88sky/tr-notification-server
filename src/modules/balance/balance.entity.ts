@@ -38,6 +38,9 @@ export class Balance {
   balance_usd: string;
 
   @Column({ type: 'varchar', nullable: true })
+  balance_from: string;
+
+  @Column({ type: 'varchar', nullable: true })
   quote_currency: string;
 
   @Column({

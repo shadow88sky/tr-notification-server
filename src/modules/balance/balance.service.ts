@@ -9,7 +9,7 @@ import {
   paginate,
 } from 'nestjs-typeorm-paginate';
 import { Balance } from './balance.entity';
-import { add } from 'winston';
+import { BalanceFromType } from '../../constants/chain.constant';
 
 @Injectable()
 export class BalanceService {
@@ -104,6 +104,7 @@ export class BalanceService {
         balance.quote_rate = item.price || '0';
         balance.updated_at = payload.updated_at;
         balance.supports_erc = [];
+        balance.balance_from = BalanceFromType.debank;
         balance.nft_token_id = '';
         arr.push(balance);
       });
@@ -143,6 +144,7 @@ export class BalanceService {
           balance.quote_rate = 0;
           balance.supports_erc = [];
           balance.nft_token_id = '';
+          balance.balance_from = BalanceFromType.bitquery;
           arr.push(balance);
         });
       });

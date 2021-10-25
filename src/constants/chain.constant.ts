@@ -15,6 +15,11 @@ export enum ChainEnum {
   celo = 42220, // Celo
 }
 
+export const BalanceFromType = {
+  debank: 'debank',
+  bitquery: 'bitquery',
+};
+
 // BitQuery
 export enum BitQueryChainEnum {
   eth = 1,
