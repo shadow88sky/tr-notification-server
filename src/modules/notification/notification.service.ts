@@ -24,7 +24,6 @@ export class NotificationService {
   async create(payload) {
     try {
       payload.hash = md5(JSON.stringify(payload.content));
-      console.log('payload.hash ', payload.hash);
       return await this.notificationRepository.save(payload);
     } catch (error) {
       if (error.code === '23505') {
