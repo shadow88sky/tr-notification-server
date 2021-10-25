@@ -49,6 +49,6 @@ export class Notification {
 
   @BeforeInsert()
   handleBeforeInsert() {
-    console.log('handleBeforeInsert');
+    this.hash = '111';
   }
 }

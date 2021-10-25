@@ -50,6 +50,7 @@
     "graphql-request": "^3.5.0",
     "handlebars": "^4.7.7",
     "lodash": "^4.17.21",
+    "md5": "2.3.0",
     "moment": "^2.29.1",
     "mysql": "^2.18.1",
     "nestjs-redis": "git+https://github.com/skunight/nestjs-redis.git",

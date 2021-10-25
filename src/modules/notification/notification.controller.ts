@@ -15,11 +15,11 @@ export class NotificationController {
    * paginate
    * @returns
    */
-   @Get()
-   async paginate(@QueryParams([]) { options, querys }) {
-     this.loggerService.info('paginate:querys:%O', querys);
-     return this.notificationService.paginate(options, querys);
-   }
+  @Get()
+  async paginate(@QueryParams([]) { options, querys }) {
+    this.loggerService.info('paginate:querys:%O', querys);
+    return this.notificationService.paginate(options, querys);
+  }
   /**
    * create
    * @param payload
@@ -27,7 +27,6 @@ export class NotificationController {
    */
   @Post()
   async create(@Body() payload: CreateNotificationPayload) {
-    console.log('payload',payload);
     const result = await this.notificationService.create(payload);
     return result;
   }
