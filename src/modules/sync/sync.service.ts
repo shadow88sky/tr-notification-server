@@ -44,8 +44,8 @@ export class SyncService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    this.syncAddressBalancesFromDebank();
-    // this.syncAddressBalancesFromBitQuery();
+    // this.syncAddressBalancesFromDebank();
+    this.syncAddressBalancesFromBitQuery();
 
     this.syncBalanceToRedis();
   }
@@ -71,51 +71,64 @@ export class SyncService implements OnModuleInit {
    * syncAddressBalancesFromBitQuery
    * 每隔10分钟执行一次
    */
-  //// @Cron('0 */10 * * * *')
-  /*
+  @Cron('0 */10 * * * *')
   async syncAddressBalancesFromBitQuery() {
     const treasuries = await this.treasuryService.find({});
-    for (let j = 0; j < treasuries.length; j++) {
-      const treasury = treasuries[j];
 
-      for (const chain in ChainEnum) {
-        if (!isNaN(Number(chain))) {
-          continue;
-        }
-        const addressList = await this.addressService.find({
-          where: {
-            chain_id: chain,
-            treasury: treasury.id,
-          },
-          // relations: ['treasury'],
-        });
-        if (!addressList.length) continue;
+    for (const chain in ChainEnum) {
+      if (!isNaN(Number(chain))) {
+        continue;
+      }
+      const addressList = await this.addressService.find({
+        where: {
+          chain_id: chain,
+          // treasury: treasury.id,
+        },
+        // relations: ['treasury'],
+      });
+      if (!addressList.length) continue;
 
-        const groupedArray = group(addressList, 5);
-        for (let index = 0; index < groupedArray.length; index++) {
-          const arr = groupedArray[index].reduce((total, currentValue) => {
-            total.push(`${currentValue.address}`);
+      const groupedArray = group(addressList, 5);
+      for (let index = 0; index < groupedArray.length; index++) {
+        const arr = groupedArray[index].reduce(
+          (total, currentValue) => {
+            total.address.push(`${currentValue.address}`);
+            const obj = {};
+            console.log('currentValue.address',currentValue.address);
+            console.log('currentValue.treasury_id',currentValue.treasury_id);
+            // obj[currentValue.address] = currentValue.treasury_id
+            // total[];
             return total;
-          }, []);
-          if (BitQueryChain[chain]) {
-            await this.syncQueue.add('bitquery', {
-              network: BitQueryChain[chain],
-              address: arr,
-              chain_id: chain,
-              treasury_id: treasury.id,
-            });
-            // console.log('bitquery', {
-            //   network: BitQueryChain[chain],
-            //   address: arr,
-            //   chain_id: chain,
-            //   treasury_id: treasury.id,
-            // });
-          }
+          },
+          {
+            address: [],
+          },
+        );
+
+        // {
+        //   "address":[],
+        //    "treasury":{
+        //      "address":treasury.id,
+        //    }
+        // }
+        console.log('arr', arr);
+        if (BitQueryChain[chain]) {
+          // await this.syncQueue.add('bitquery', {
+          //   network: BitQueryChain[chain],
+          //   address: arr,
+          //   chain_id: chain,
+          //   treasury_id: treasury.id,
+          // });
+          // console.log('bitquery', {
+          //   network: BitQueryChain[chain],
+          //   address: arr,
+          //   chain_id: chain,
+          //   treasury_id: treasury.id,
+          // });
         }
       }
     }
   }
-  */
 
   /**
    * asynAddressBalancesHistory
