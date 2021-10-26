@@ -31,7 +31,6 @@ second (optional)
 export class SyncService implements OnModuleInit {
   private redisKey = 'tr:balance-top2:list';
 
-  // private readonly queue: PQueue;
   constructor(
     @InjectQueue('sync') private syncQueue: Queue,
     private readonly balanceService: BalanceService,
@@ -63,7 +62,9 @@ export class SyncService implements OnModuleInit {
 
     for (let index = 0; index < addressList.length; index++) {
       const item = addressList[index];
-      await this.syncQueue.add('debank', item);
+      await this.syncQueue.add('debank', item, {
+        removeOnComplete: true,
+      });
     }
   }
 
@@ -267,6 +268,7 @@ export class SyncService implements OnModuleInit {
       _.forEach(
         result,
         ({
+          id,
           treasury_id,
           chain_id,
           address,
@@ -279,6 +281,7 @@ export class SyncService implements OnModuleInit {
           balanceObj[
             `${treasury_id}:${ChainEnum[chain_id]}:${address}:${contract_address}`
           ] = {
+            id,
             balance,
             chain_id,
             address,
