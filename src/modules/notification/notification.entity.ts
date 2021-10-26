@@ -24,7 +24,9 @@ export class Notification {
       treasury_id: string;
       contract_ticker_symbol: string;
       before: string;
+      beforeId: string;
       newest: string;
+      newestId: string;
       ratio: string;
       address: string;
       chain_id: string;
