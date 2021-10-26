@@ -254,6 +254,7 @@ export class SyncService implements OnModuleInit {
       _.forEach(
         result,
         ({
+          id,
           treasury_id,
           chain_id,
           address,
@@ -266,6 +267,7 @@ export class SyncService implements OnModuleInit {
           balanceObj[
             `${treasury_id}:${ChainEnum[chain_id]}:${address}:${contract_address}`
           ] = {
+            id,
             balance,
             chain_id,
             address,
