@@ -31,7 +31,6 @@ second (optional)
 export class SyncService implements OnModuleInit {
   private redisKey = 'tr:balance-top2:list';
 
-  // private readonly queue: PQueue;
   constructor(
     @InjectQueue('sync') private syncQueue: Queue,
     private readonly balanceService: BalanceService,
@@ -63,7 +62,9 @@ export class SyncService implements OnModuleInit {
 
     for (let index = 0; index < addressList.length; index++) {
       const item = addressList[index];
-      await this.syncQueue.add('debank', item);
+      await this.syncQueue.add('debank', item, {
+        removeOnComplete: true,
+      });
     }
   }
 

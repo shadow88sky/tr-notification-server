@@ -1,4 +1,4 @@
-import { Controller, Delete, Get } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { BalanceService } from './balance.service';
 import { LoggerService, QueryParams } from '../common/';
@@ -29,5 +29,15 @@ export class BalanceController {
   async paginate(@QueryParams(['address']) { options, querys }) {
     this.loggerService.info('paginate:querys:%O', querys);
     return this.balanceService.paginate(options, querys);
+  }
+
+  /**
+   * findId
+   * @param id
+   * @returns
+   */
+  @Get(':id')
+  async findId(@Param('id') id: string) {
+    return this.balanceService.findOne(id);
   }
 }
