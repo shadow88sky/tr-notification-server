@@ -16,7 +16,6 @@ export class BitQueryConsumer {
   @Process('bitquery')
   async transcode(job: Job<unknown>) {
     if (job.data) {
-      // 
       await this.queryBalances(job.data);
     }
 
@@ -30,7 +29,6 @@ export class BitQueryConsumer {
    */
   async queryBalances(variables) {
     try {
-      
       const graphQLClient = new GraphQLClient(
         this.configService.get('BITQUERY_URL'),
         {
@@ -59,7 +57,7 @@ export class BitQueryConsumer {
         }
       `;
       const response = await graphQLClient.request(query, variables);
-      
+
       if (response) {
         await this.balanceService.handleManyFromBitQuery(response, variables);
       }

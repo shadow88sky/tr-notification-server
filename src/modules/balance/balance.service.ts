@@ -125,7 +125,7 @@ export class BalanceService {
     }
   }
 
-  async handleManyFromBitQuery(payload, { chain_id, treasury_id }) {
+  async handleManyFromBitQuery(payload, { chain_id, treasury_id_map }) {
     try {
       const arr = [];
       payload.ethereum.address.forEach((address) => {
@@ -138,7 +138,15 @@ export class BalanceService {
             .toString();
           balance.balance_usd = '0';
           balance.type = '';
-          balance.treasury = treasury_id;
+
+          console.log(
+            '_.get(treasury_id_map, address.address.toLowerCase())',
+            _.get(treasury_id_map, address.address.toLowerCase()),
+          );
+          balance.treasury = _.get(
+            treasury_id_map,
+            address.address.toLowerCase(),
+          );
           balance.quote_currency = '';
           balance.chain_id = chain_id;
           balance.contract_decimals = item.currency.decimals;

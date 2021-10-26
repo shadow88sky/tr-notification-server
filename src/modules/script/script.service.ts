@@ -56,7 +56,7 @@ export class ScriptService {
 
           try {
             await self.addressService.create({
-              address: element.address,
+              address: element.address.toLowerCase(),
               chain_id: element.chain,
               treasury: treasury.id,
             });

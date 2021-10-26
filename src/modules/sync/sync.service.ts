@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import { Cron, SchedulerRegistry } from '@nestjs/schedule';
 import request from 'request-promise';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
@@ -8,12 +8,12 @@ import _ from 'lodash';
 import { RedisService } from 'nestjs-redis';
 import { BalanceService } from '../balance';
 import { AddressService } from '../address';
-import { TreasuryService } from '../treasury';
 import { HistoryService } from '../history';
 import { BitQueryChain, ChainEnum, MAX_SYNC_DAY } from '../../constants';
 import { ConfigService } from '../config';
 import { LoggerService } from '../common/';
 import { group } from '../../utils/array';
+import { CronJob } from 'cron';
 
 /*
 
@@ -39,21 +39,46 @@ export class SyncService implements OnModuleInit {
     private readonly configService: ConfigService,
     private readonly redisService: RedisService,
     private readonly loggerService: LoggerService,
-    private readonly treasuryService: TreasuryService,
+    private schedulerRegistry: SchedulerRegistry,
   ) {}
 
   async onModuleInit() {
-    // this.syncAddressBalancesFromDebank();
-    this.syncAddressBalancesFromBitQuery();
+    if (this.configService.get('SYNC_DEBANK') === '1') {
+      console.log('SYNC_DEBANK');
+      this.syncAddressBalancesFromDebank();
+      this.addCronJob(
+        'debank',
+        '0 */10 * * * *',
+        // '0 */10 * * * *',
+        this.syncAddressBalancesFromDebank.bind(this),
+      );
+    }
+    if (this.configService.get('SYNC_BITQUERY') === '1') {
+      console.log('SYNC_BITQUERY');
+      this.syncAddressBalancesFromBitQuery();
+      this.addCronJob(
+        'bitquery',
+        '0 */10 * * * *',
+        this.syncAddressBalancesFromBitQuery.bind(this),
+      );
+    }
 
     this.syncBalanceToRedis();
   }
 
+  addCronJob(name: string, cronTime: string, func) {
+    const job = new CronJob(`${cronTime}`, func);
+
+    this.schedulerRegistry.addCronJob(name, job);
+    job.start();
+  }
   /**
    * syncAddressBalancesFromDebank
    * 每隔10分钟执行一次
    */
-  @Cron('0 */10 * * * *')
+  // @Cron('0 */10 * * * *', {
+  //   name: 'debank',
+  // })
   async syncAddressBalancesFromDebank() {
     //
     const addressList = await this.addressService.find({
@@ -72,10 +97,10 @@ export class SyncService implements OnModuleInit {
    * syncAddressBalancesFromBitQuery
    * 每隔10分钟执行一次
    */
-  @Cron('0 */10 * * * *')
+  // @Cron('0 */10 * * * *', {
+  //   name: 'bitquery',
+  // })
   async syncAddressBalancesFromBitQuery() {
-    const treasuries = await this.treasuryService.find({});
-
     for (const chain in ChainEnum) {
       if (!isNaN(Number(chain))) {
         continue;
@@ -85,8 +110,9 @@ export class SyncService implements OnModuleInit {
           chain_id: chain,
           // treasury: treasury.id,
         },
-        // relations: ['treasury'],
+        relations: ['treasury'],
       });
+      //
       if (!addressList.length) continue;
 
       const groupedArray = group(addressList, 5);
@@ -95,14 +121,13 @@ export class SyncService implements OnModuleInit {
           (total, currentValue) => {
             total.address.push(`${currentValue.address}`);
             const obj = {};
-            console.log('currentValue.address',currentValue.address);
-            console.log('currentValue.treasury_id',currentValue.treasury_id);
-            // obj[currentValue.address] = currentValue.treasury_id
-            // total[];
+            obj[currentValue.address] = _.get(currentValue, 'treasury.id');
+            total.treasury = { ...total.treasury, ...obj };
             return total;
           },
           {
             address: [],
+            treasury: {},
           },
         );
 
@@ -112,19 +137,23 @@ export class SyncService implements OnModuleInit {
         //      "address":treasury.id,
         //    }
         // }
-        console.log('arr', arr);
+        //
         if (BitQueryChain[chain]) {
-          // await this.syncQueue.add('bitquery', {
-          //   network: BitQueryChain[chain],
-          //   address: arr,
-          //   chain_id: chain,
-          //   treasury_id: treasury.id,
-          // });
+          await this.syncQueue.add(
+            'bitquery',
+            {
+              network: BitQueryChain[chain],
+              address: arr.address,
+              chain_id: chain,
+              treasury_id_map: arr.treasury,
+            },
+            { removeOnComplete: true },
+          );
           // console.log('bitquery', {
           //   network: BitQueryChain[chain],
-          //   address: arr,
+          //   address: arr.address,
           //   chain_id: chain,
-          //   treasury_id: treasury.id,
+          //   treasury_id_map: arr.treasury,
           // });
         }
       }
