@@ -138,11 +138,6 @@ export class BalanceService {
             .toString();
           balance.balance_usd = '0';
           balance.type = '';
-
-          console.log(
-            '_.get(treasury_id_map, address.address.toLowerCase())',
-            _.get(treasury_id_map, address.address.toLowerCase()),
-          );
           balance.treasury = _.get(
             treasury_id_map,
             address.address.toLowerCase(),

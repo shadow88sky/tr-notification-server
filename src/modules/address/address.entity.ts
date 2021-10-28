@@ -16,7 +16,7 @@ import { lowercase } from '../../transformers';
 @Entity({
   name: 'addresses',
 })
-@Unique('address_chain', ['address', 'chain_id'])
+@Unique('address_chain_treasury', ['address', 'chain_id', 'treasury'])
 export class Address {
   @PrimaryGeneratedColumn('uuid')
   id: string;
